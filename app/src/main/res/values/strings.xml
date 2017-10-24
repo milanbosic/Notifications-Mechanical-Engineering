@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Нотификације о вестима</string>
+    <string name="action_settings">Settings</string>
+    <string name="openDrawer">Open Drawer </string>
+    <string name="closeDrawer">Close Drawer </string>
+
+    <string name="element_text">Element</string>
+    <string name="grid_layout_manager">Grid Layout Manager</string>
+    <string name="linear_layout_manager">Linear Layout Manager</string>
+</resources>

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "536272520694",
+    "firebase_url": "https://masinac-notification.firebaseio.com",
+    "project_id": "masinac-notification",
+    "storage_bucket": "masinac-notification.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:536272520694:android:90310d2e5a65b8bf",
+        "android_client_info": {
+          "package_name": "com.vies.notifikacijevesti"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "536272520694-1k5b9r6i2vg9fquur3aniac4ecasb8rg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDC-2Z5zOi0AdaGp_TT_Zbs0woVo6UG4Cg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
