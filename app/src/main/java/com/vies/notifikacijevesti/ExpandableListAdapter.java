@@ -12,40 +12,20 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.IOError;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -76,7 +56,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         this.listDataHeader = listDataHeader;
         this.listHashMap = listHashMap;
         mChildCheckStates = new HashMap<Integer, Boolean[]>();
+
         tinyDB = new TinyDB(context);
+
         if (tinyDB.contains("selectedSubjects")) {
             mSelectedSubjects = tinyDB.getListString("selectedSubjects");
         } else{
@@ -214,8 +196,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-            if (isChecked) {
-
                 switch (groupPosition){
                     case 0:
                         oasSelected.set(mChildPosition, isChecked);
@@ -231,80 +211,21 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         break;
                 }
 
-                mSelectedSubjects.add(cb.getText().toString());
+                if (isChecked) {
 
-                for (int i = 0; i < mSelectedSubjects.size(); i++){
-                    Log.d("selected", "" + mSelectedSubjects.get(i));
+                    mSelectedSubjects.add(cb.getText().toString());
+
+                } else{
+                    mSelectedSubjects.remove(cb.getText().toString());
                 }
-            } else{
-                Log.d("checkboxtext", childViewHolder.mCheckBox.getText().toString());
-                switch (groupPosition){
-                    case 0:
-                        oasSelected.set(mChildPosition, isChecked);
-                        break;
-                    case 1:
-                        masSelected.set(mChildPosition, isChecked);
-                        break;
-                    case 2:
-                        katedreSelected.set(mChildPosition, isChecked);
-                        break;
-                    case 3:
-                        ostaloSelected.set(mChildPosition, isChecked);
-                        break;
-                }
-
-//                mSelectedSubjects.remove(childViewHolder.mCheckBox.getText().toString());
-                mSelectedSubjects.remove(cb.getText().toString());
-
-                for (int i = 0; i < mSelectedSubjects.size(); i++){
-                    Log.d("selected", "" + mSelectedSubjects.get(i));
-                }
-            }
-
             }
         });
 
         return convertView;
     }
 
-    public void httpRequest() throws IOException{
-        URL url = new URL("http://91.187.151.141:3000//api/bosic");
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        urlConnection.setRequestMethod("POST");
-        //urlConnection.setRequestProperty(“Key”,”Value”);
-        urlConnection.setDoOutput(true);
-        OutputStream out = null;
-        try{
-            out = new BufferedOutputStream(urlConnection.getOutputStream());
-
-            BufferedWriter writer = new BufferedWriter (new OutputStreamWriter(out, "UTF-8"));
-
-            writer.write("test");
-
-            writer.flush();
-
-            writer.close();
-
-            out.close();
-
-            urlConnection.connect();
-
-        } catch(MalformedURLException error) {
-            //Handles an incorrectly entered URL
-            Log.d("urlerror", error.getMessage());
-        }
-        catch(SocketTimeoutException error) {
-        //Handles URL access timeout.
-            Log.d("urlerror", error.getMessage());
-        }
-        catch (IOException error) {
-        //Handles input and output errors
-            Log.d("urlerror", error.getMessage());
-        }
-
-    }
-
     public void onButtonPress(){
+
         if (mSelectedSubjects != null) {
             tinyDB.putListString("selectedSubjects", mSelectedSubjects);
         }
@@ -316,9 +237,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         tinyDB.putListBoolean("katedreSelected", katedreSelected);
 
         tinyDB.putListBoolean("ostaloSelected", ostaloSelected);
-
-//        topicsToSend = mSelectedSubjects;
-//        ArrayList<String> topicsToSend = new ArrayList<String>();
 
         String url ="http://91.187.151.141:3000/api/";
 
@@ -345,9 +263,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     Log.d("Response: ", response.getString("message"));
                     if (response.getString("message").contains("Success")){
                         Toast.makeText(mContext,  "Успешно сачувано.", Toast.LENGTH_SHORT).show();
+                    } else{
+                        Toast.makeText(mContext, "Дошло је до грешке.", Toast.LENGTH_SHORT).show();
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
+                    Toast.makeText(mContext, "Дошло је до грешке.", Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -376,7 +297,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     public final class ChildViewHolder {
 
-        //TextView mChildText;
         CheckBox mCheckBox;
     }
 }
