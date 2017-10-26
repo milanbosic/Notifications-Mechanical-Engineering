@@ -17,11 +17,23 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.Volley;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -46,21 +58,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     // [START receive_message]
 
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
         TinyDB tinyDB = new TinyDB(getApplicationContext());
 
-        Log.d("wtf", "notifikacija primljena");
-
         novaVest = remoteMessage.getData().get("body");
         newTitle = remoteMessage.getData().get("title");
         newUrl = remoteMessage.getData().get("url");
-
-//        novaVest = "test2020";
-//        newTitle = "asdff";
-//        newUrl = "http://www.goole.com";
-
         sendNotification(remoteMessage.getData());
 
         broadcastIntent();
@@ -77,7 +83,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void sendNotification(Map<String, String> notification) {
         int requestID = (int) System.currentTimeMillis();
-
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(notification.get("url")));
 
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -104,5 +109,48 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         notificationBuilder.setLights(Color.BLUE, 1000, 300);
 
         notificationManager.notify(requestID, notificationBuilder.build());
+    }
+
+    public void onTokenRefresh(){
+
+        Context context = getApplicationContext();
+
+        final TinyDB tinyDB = new TinyDB(context);
+        String url ="http://91.187.151.172:3000/api/onrefresh/";
+
+        HashMap<String, String> params = new HashMap<String, String>();
+
+        params.put ("oldtoken", tinyDB.getString("token"));
+        params.put("token", FirebaseInstanceId.getInstance().getToken());
+
+        Response.ErrorListener errorListen = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.v("responseJson: ", error);
+                //Toast.makeText(getApplicationContext(), "Дошло је до грешке.", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        Response.Listener<JSONObject> responseListen = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try{
+                    Log.d("Response: ", response.getString("message"));
+                    if (response.getString("message").contains("Success")){
+                        tinyDB.putString("token", FirebaseInstanceId.getInstance().getToken());
+                    } else{
+
+                    }
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, responseListen, errorListen);
+
+        requestQueue.add(jsObjRequest);
+
     }
 }

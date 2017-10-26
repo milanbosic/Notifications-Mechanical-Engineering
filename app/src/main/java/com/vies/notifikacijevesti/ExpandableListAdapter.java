@@ -40,6 +40,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private HashMap<Integer, Boolean[]> mChildCheckStates;
     private TinyDB tinyDB;
 
+
     private ArrayList<Boolean> oasSelected;
     private ArrayList<Boolean> masSelected;
     private ArrayList<Boolean> katedreSelected;
@@ -226,21 +227,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     public void onButtonPress(){
 
-        if (mSelectedSubjects != null) {
-            tinyDB.putListString("selectedSubjects", mSelectedSubjects);
-        }
+        String url ="http://91.187.151.172:3000/api/";
 
-        tinyDB.putListBoolean("oasSelected", oasSelected);
-
-        tinyDB.putListBoolean("masSelected", masSelected);
-
-        tinyDB.putListBoolean("katedreSelected", katedreSelected);
-
-        tinyDB.putListBoolean("ostaloSelected", ostaloSelected);
-
-        String url ="http://91.187.151.141:3000/api/";
-
-        HashMap<String, String> params = new HashMap<String, String>(3);
+        HashMap<String, String> params = new HashMap<String, String>();
 
         params.put("token", FirebaseInstanceId.getInstance().getToken());
 
@@ -253,6 +242,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.v("responseJson: ", error);
+                Toast.makeText(mContext, "Дошло је до грешке.", Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -262,6 +252,18 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 try{
                     Log.d("Response: ", response.getString("message"));
                     if (response.getString("message").contains("Success")){
+
+                        if (mSelectedSubjects != null) {
+                            tinyDB.putListString("selectedSubjects", mSelectedSubjects);
+                        }
+
+                        tinyDB.putListBoolean("oasSelected", oasSelected);
+
+                        tinyDB.putListBoolean("masSelected", masSelected);
+
+                        tinyDB.putListBoolean("katedreSelected", katedreSelected);
+
+                        tinyDB.putListBoolean("ostaloSelected", ostaloSelected);
                         Toast.makeText(mContext,  "Успешно сачувано.", Toast.LENGTH_SHORT).show();
                     } else{
                         Toast.makeText(mContext, "Дошло је до грешке.", Toast.LENGTH_SHORT).show();

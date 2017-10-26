@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TinyDB tinyDB = new TinyDB(this.getApplicationContext());
+        tinyDB.putString("token", FirebaseInstanceId.getInstance().getToken());
 
         setContentView(R.layout.activity_main);
 

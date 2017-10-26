@@ -61,6 +61,8 @@ public class Tab1Vesti extends Fragment {
         LocalBroadcastManager.getInstance(this.getContext()).registerReceiver(onNotice, intentFilter);
 
 //        TinyDB tinyDB = new TinyDB(getContext());
+
+
 //
 //        tinyDB.clear();
 //        ArrayList<String> test = new ArrayList<>();
@@ -149,6 +151,7 @@ public class Tab1Vesti extends Fragment {
 
         return rootView;
     }
+
 
     private BroadcastReceiver onNotice = new BroadcastReceiver() {
         @Override
