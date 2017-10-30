@@ -5,15 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Message;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,26 +30,19 @@ import java.util.ArrayList;
  * Created by milan on 10.10.2017..
  */
 
-public class Tab1Vesti extends Fragment {
+public class Tab2Vesti extends Fragment {
 
     private static final String TAG = "RecyclerViewFragment";
-    private static final String KEY_LAYOUT_MANAGER = "layoutManager";
-    private Handler mHandler;
 
-    private enum LayoutManagerType {
-        LINEAR_LAYOUT_MANAGER
-    }
-
-    protected LayoutManagerType mCurrentLayoutManagerType;
-
-    public RecyclerView mRecyclerView;
-    public CustomAdapter mAdapter;
-    protected RecyclerView.LayoutManager mLayoutManager;
-    protected ArrayList<String> mDataset;
-    protected ArrayList<String> mTitlesSet;
-    protected ArrayList<String> mUrlsSet;
-    protected Button button;
-    protected int counter;
+    RecyclerView mRecyclerView;
+    private VestiListAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private ArrayList<String> mDataset;
+    private ArrayList<String> mTitlesSet;
+    private ArrayList<String> mUrlsSet;
+    private Button button;
+    private int counter;
+    TinyDB tinyDB;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,8 +53,6 @@ public class Tab1Vesti extends Fragment {
 
 //        TinyDB tinyDB = new TinyDB(getContext());
 
-
-//
 //        tinyDB.clear();
 //        ArrayList<String> test = new ArrayList<>();
 //        test.add(0, "PREDMET 1");
@@ -82,54 +71,30 @@ public class Tab1Vesti extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.tab1vesti, container, false);
+        View rootView = inflater.inflate(R.layout.tab2vesti, container, false);
         rootView.setTag(TAG);
 
         initDataset(rootView);
 
         mRecyclerView = rootView.findViewById(R.id.recyclerView);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
-        mLayoutManager = new LinearLayoutManager(getActivity());
-
-        mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-
-        if (savedInstanceState != null) {
-            // Restore saved layout manager type.
-            mCurrentLayoutManagerType = (LayoutManagerType) savedInstanceState
-                    .getSerializable(KEY_LAYOUT_MANAGER);
-        }
-        setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
-
-        mAdapter = new CustomAdapter(mDataset, mTitlesSet, mUrlsSet, getContext());
+        mAdapter = new VestiListAdapter(mDataset, mTitlesSet, mUrlsSet, getContext(), rootView);
 
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        runLayoutAnimation(mRecyclerView);
-
-        Log.d("token", FirebaseInstanceId.getInstance().getToken());
 
         button = rootView.findViewById(R.id.button2);
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TinyDB tinyDB = new TinyDB(getContext());
-                ArrayList<String> testData = tinyDB.getListString("vesti");
-                testData.add(0, "Термин поправног (писаног) дела испита + Усмени фебруарски рок");
-                tinyDB.putListString("vesti", testData);
-
                 mAdapter.addData("Термин поправног(писаног) дела испита + Усмени фебруарски рок");
 
-                ArrayList<String> testTitles = tinyDB.getListString("titles");
-                testTitles.add(0, "" + counter);
-                tinyDB.putListString("titles", testTitles);
-
-//                mAdapter.addTitle("Компјутерска симулација и вештачка интелигенција (0404)");
                 mAdapter.addTitle("" + counter);
                 counter++;
-
-                ArrayList<String> testUrls = tinyDB.getListString("urls");
-                testUrls.add(0, "http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
-                tinyDB.putListString("urls", testUrls);
 
                 mAdapter.addUrl("http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
 
@@ -175,53 +140,40 @@ public class Tab1Vesti extends Fragment {
         recyclerView.scheduleLayoutAnimation();
     }
 
-    public void setRecyclerViewLayoutManager(LayoutManagerType layoutManagerType) {
-        int scrollPosition = 0;
-
-        if (mRecyclerView.getLayoutManager() != null) {
-            scrollPosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager())
-                    .findFirstCompletelyVisibleItemPosition();
-        }
-
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.scrollToPosition(scrollPosition);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-
-        savedInstanceState.putSerializable(KEY_LAYOUT_MANAGER, mCurrentLayoutManagerType);
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
     private void initDataset(View view) {
-        final TinyDB tinyDB = new TinyDB(this.getContext());
+
+        tinyDB = new TinyDB(this.getContext());
         ArrayList<String> listData = tinyDB.getListString("vesti");
-        if (listData.size() != 0){
-            mDataset = listData;
-        } else{
-            TextView textView = view.findViewById(R.id.emptyVesti);
-            textView.setText("Nema novih vesti.");
-        }
-
         ArrayList<String> listTitles = tinyDB.getListString("titles");
-        if (listTitles.size() != 0){
-            mTitlesSet = listTitles;
-        } else{
-
-        }
-
         ArrayList<String> listUrls = tinyDB.getListString("urls");
-        if (listUrls.size() != 0){
+
+        if (!listData.isEmpty()){
+            mDataset = listData;
+            mTitlesSet = listTitles;
             mUrlsSet = listUrls;
+
         } else{
+            mDataset = new ArrayList<>();
+            mTitlesSet = new ArrayList<>();
+            mUrlsSet = new ArrayList<>();
 
         }
-
     }
+
+    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+            mAdapter.removeAt(viewHolder.getAdapterPosition());
+        }
+
+    };
+
 
 }
 

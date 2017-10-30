@@ -1,7 +1,10 @@
 package com.vies.notifikacijevesti;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -137,7 +140,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         String headerTitle = getGroup(groupPosition);
         if (convertView == null){
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.list_group, null);
+            convertView = inflater.inflate(R.layout.exp_list_group, null);
             groupViewHolder = new GroupViewHolder();
             groupViewHolder.mGroupText = (TextView)  convertView.findViewById(R.id.lbListHeader);
             convertView.setTag(groupViewHolder);
@@ -159,16 +162,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         if (convertView == null){
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.list_item, null);
+            convertView = inflater.inflate(R.layout.exp_list_item, null);
 
             childViewHolder = new ChildViewHolder();
             childViewHolder.mCheckBox = (CheckBox) convertView.findViewById(R.id.checkBoxListItem);
 
-            convertView.setTag(R.layout.list_item, childViewHolder);
+            convertView.setTag(R.layout.exp_list_item, childViewHolder);
         } else {
 
             childViewHolder = (ChildViewHolder) convertView
-                    .getTag(R.layout.list_item);
+                    .getTag(R.layout.exp_list_item);
         }
 
         final CheckBox cb = convertView.findViewById(R.id.checkBoxListItem);
@@ -241,8 +244,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         Response.ErrorListener errorListen = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.v("responseJson: ", error);
-                Toast.makeText(mContext, "Дошло је до грешке.", Toast.LENGTH_SHORT).show();
+            VolleyLog.v("responseJson: ", error);
+            serverErrorDialog();
             }
         };
 
@@ -266,11 +269,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         tinyDB.putListBoolean("ostaloSelected", ostaloSelected);
                         Toast.makeText(mContext,  "Успешно сачувано.", Toast.LENGTH_SHORT).show();
                     } else{
-                        Toast.makeText(mContext, "Дошло је до грешке.", Toast.LENGTH_SHORT).show();
+                        serverErrorDialog();
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
-                    Toast.makeText(mContext, "Дошло је до грешке.", Toast.LENGTH_SHORT).show();
+                    serverErrorDialog();
                 }
             }
         };
@@ -301,4 +304,25 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         CheckBox mCheckBox;
     }
+
+    private void serverErrorDialog(){
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(mContext);
+        }
+        builder.setTitle("Грешка")
+                .setMessage("Дошло је до грешке у повезивању са сервером. Молимо покушајте поново.")
+                .setPositiveButton("У реду", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setIcon(R.drawable.ic_alert)
+                .show();
+
+    }
+
+
 }

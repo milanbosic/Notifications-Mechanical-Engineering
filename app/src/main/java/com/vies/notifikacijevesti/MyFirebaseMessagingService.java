@@ -43,10 +43,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
 
-    private  ArrayList<String> vestiDatabase;
-    private  ArrayList<String> titlesDatabase;
-    private ArrayList<String> urlsDatabase;
-
     public static String novaVest;
     public static String newTitle;
     public static String newUrl;
@@ -61,8 +57,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-
-        TinyDB tinyDB = new TinyDB(getApplicationContext());
 
         novaVest = remoteMessage.getData().get("body");
         newTitle = remoteMessage.getData().get("title");
@@ -79,6 +73,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // We should use LocalBroadcastManager when we want INTRA app
         // communication
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+
+        Intent intent1 = new Intent();
+        intent1.setAction("com.notifikacijevesti.refreshhistory");
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent1);
+
     }
 
     private void sendNotification(Map<String, String> notification) {

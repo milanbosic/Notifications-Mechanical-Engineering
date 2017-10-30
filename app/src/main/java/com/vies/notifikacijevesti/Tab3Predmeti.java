@@ -1,9 +1,7 @@
 package com.vies.notifikacijevesti;
 
-import android.app.SearchManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +18,7 @@ import java.util.List;
  * Created by milan on 10.10.2017..
  */
 
-public class Tab2Predmeti extends Fragment {
+public class Tab3Predmeti extends Fragment {
 
     private ExpandableListView listView;
     private ExpandableListAdapter listAdapter;
@@ -33,7 +31,7 @@ public class Tab2Predmeti extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.tab2predmeti, container, false);
+        View rootView = inflater.inflate(R.layout.tab3predmeti, container, false);
         savebutton = rootView.findViewById(R.id.saveButton);
 
 //        SearchManager searchManager = (SearchManager) getActivity().getSystemService(rootView.getContext().SEARCH_SERVICE);

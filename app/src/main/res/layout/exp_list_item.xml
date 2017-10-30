@@ -6,16 +6,19 @@
     android:paddingBottom="8dp"
     android:paddingTop="8dp"
     android:paddingRight="8dp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingEnd="8dp"
+    android:paddingStart="5dp">
 
     <CheckBox
         android:id="@+id/checkBoxListItem"
-        android:text="test 123"
-        android:textColor="#455A64"
+        android:text=""
+        android:textColor="@color/primaryText"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:paddingLeft="12dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp" />
 
 </LinearLayout>

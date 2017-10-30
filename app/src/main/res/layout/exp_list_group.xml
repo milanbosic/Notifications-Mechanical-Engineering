@@ -8,6 +8,7 @@
         android:id="@+id/lbListHeader"
         android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
         android:textSize="16dp"
+        android:textColor="@color/primaryText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

@@ -2,8 +2,6 @@ package com.vies.notifikacijevesti;
 
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,19 +14,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.iid.FirebaseInstanceId;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
     Intent mServiceIntent;
     private MyFirebaseMessagingService mSensorService;
 
-    String TITLES[] = {"Вести", "Предмети", "Подешавања", "О апликацији"};
+    String TITLES[] = {"Вести", "Историја", "Предмети", "Подешавања", "О апликацији"};
 
-    int ICONS[] = {R.drawable.ic_home,R.drawable.ic_events,R.drawable.ic_mail,R.drawable.ic_shop,R.drawable.ic_travel};
+    int ICONS[] = {R.drawable.ic_home,R.drawable.ic_list, R.drawable.ic_events,R.drawable.ic_settings,R.drawable.ic_travel};
 
     //Similarly we Create a String Resource for the name and email in the header view
     //And we also create a int resource for profile picture in the header view
@@ -76,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         TinyDB tinyDB = new TinyDB(this.getApplicationContext());
         tinyDB.putString("token", FirebaseInstanceId.getInstance().getToken());
 
@@ -93,14 +87,16 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_home_dark);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_events_dark);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_list_dark);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_home_dark);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_events_dark);
+
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
         mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
 
-        mAdapter = new MyAdapter(TITLES,ICONS,NAME,EMAIL,PROFILE);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
+        mAdapter = new NavDrawerAdapter(TITLES,ICONS,NAME,EMAIL,PROFILE);       // Creating the Adapter of NavDrawerAdapter class(which we are going to see in a bit)
         // And passing the titles,icons,header view name, view email,
         // and header view profile picture
 
@@ -130,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
+        mViewPager.setCurrentItem(1);
 
     }
 
@@ -139,8 +136,6 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -171,11 +166,14 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch(position){
                 case 0:
-                    Tab1Vesti tab1 = new Tab1Vesti();
+                    Tab1Istorija tab1 = new Tab1Istorija();
                     return tab1;
                 case 1:
-                    Tab2Predmeti tab2 = new Tab2Predmeti();
+                    Tab2Vesti tab2 = new Tab2Vesti();
                     return tab2;
+                case 2:
+                    Tab3Predmeti tab3 = new Tab3Predmeti();
+                    return tab3;
                 default:
                     return null;
             }
@@ -183,16 +181,18 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 2 total pages.
-            return 2;
+            // Show 3 total pages.
+            return 3;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Вести";
+                    return "Историја";
                 case 1:
+                    return "Вести";
+                case 2:
                     return "Предмети";
             }
             return null;
