@@ -51,27 +51,27 @@ public class Tab1Istorija extends Fragment {
         mAdapter = new IstorijaListAdapter(titleSet, dataSet, urlSet, getContext(), rootView);
         mRecyclerView.setAdapter(mAdapter);
 
-        mButton = rootView.findViewById(R.id.buttonTest);
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//        mButton = rootView.findViewById(R.id.buttonTest);
+//        mButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                mAdapter.addTitle(" " + counter);
+//                mAdapter.addData("test");
+//                mAdapter.addUrl("http://www.google.com");
+//                mAdapter.notifyItemInserted(0);
+//                mRecyclerView.scrollToPosition(0);
+//                counter++;
+//            }
+//        });
 
-                mAdapter.addTitle(" " + counter);
-                mAdapter.addData("test");
-                mAdapter.addUrl("http://www.google.com");
-                mAdapter.notifyItemInserted(0);
-                mRecyclerView.scrollToPosition(0);
-                counter++;
-            }
-        });
-
-        mButtonDelete = rootView.findViewById(R.id.buttonTestDelete);
-        mButtonDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAdapter.clearAll();
-            }
-        });
+//        mButtonDelete = rootView.findViewById(R.id.buttonTestDelete);
+//        mButtonDelete.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mAdapter.clearAll();
+//            }
+//        });
 
 //        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 //

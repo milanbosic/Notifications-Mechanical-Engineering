@@ -42,7 +42,7 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
 
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrlsSet.get(getAdapterPosition())));
                         mContext.startActivity(browserIntent);
-                        removeAt(getAdapterPosition());
+                        //removeAt(getAdapterPosition());
                     }
                 }
             });

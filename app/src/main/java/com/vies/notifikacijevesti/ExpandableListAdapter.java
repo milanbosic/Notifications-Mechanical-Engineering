@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +44,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private HashMap<String, List<String>> listHashMap;
     private HashMap<Integer, Boolean[]> mChildCheckStates;
     private TinyDB tinyDB;
-
+    private View mView;
 
     private ArrayList<Boolean> oasSelected;
     private ArrayList<Boolean> masSelected;
@@ -51,17 +53,25 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private ArrayList<Boolean> checkedArray;
 
+    private ProgressBar mProgressBar;
+    private ExpandableListView mExpandableListView;
+
     private GroupViewHolder groupViewHolder;
     private ChildViewHolder childViewHolder;
 
 
-    public ExpandableListAdapter (Context context, List<String> listDataHeader, HashMap<String, List<String>> listHashMap){
+    public ExpandableListAdapter (Context context, List<String> listDataHeader, HashMap<String, List<String>> listHashMap, View mainView){
         this.mContext = context;
         this.listDataHeader = listDataHeader;
         this.listHashMap = listHashMap;
+        mView = mainView;
         mChildCheckStates = new HashMap<Integer, Boolean[]>();
+        mProgressBar = mainView.findViewById(R.id.progressBar);
+        mExpandableListView = mainView.findViewById(R.id.lvExp);
 
         tinyDB = new TinyDB(context);
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mExpandableListView.setVisibility(View.VISIBLE);
 
         if (tinyDB.contains("selectedSubjects")) {
             mSelectedSubjects = tinyDB.getListString("selectedSubjects");
@@ -230,11 +240,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     public void onButtonPress(){
 
-        String url ="http://91.187.151.172:3000/api/";
+        String url ="http://91.187.151.209:3000/api/";
 
         HashMap<String, String> params = new HashMap<String, String>();
 
         params.put("token", FirebaseInstanceId.getInstance().getToken());
+        mProgressBar.setVisibility(View.VISIBLE);
+        mExpandableListView.setVisibility(View.INVISIBLE);
 
         int i = 0;
         for(String object: mSelectedSubjects){
@@ -246,6 +258,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             public void onErrorResponse(VolleyError error) {
             VolleyLog.v("responseJson: ", error);
             serverErrorDialog();
+                mProgressBar.setVisibility(View.INVISIBLE);
+                mExpandableListView.setVisibility(View.VISIBLE);
+
             }
         };
 
@@ -268,12 +283,18 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                         tinyDB.putListBoolean("ostaloSelected", ostaloSelected);
                         Toast.makeText(mContext,  "Успешно сачувано.", Toast.LENGTH_SHORT).show();
+                            mProgressBar.setVisibility(View.INVISIBLE);
+                        mExpandableListView.setVisibility(View.VISIBLE);
                     } else{
                         serverErrorDialog();
+                        mProgressBar.setVisibility(View.INVISIBLE);
+                        mExpandableListView.setVisibility(View.VISIBLE);
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
                     serverErrorDialog();
+                    mProgressBar.setVisibility(View.INVISIBLE);
+                    mExpandableListView.setVisibility(View.VISIBLE);
                 }
             }
         };
@@ -289,11 +310,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
-//    public void filterData(String query){
-//
-//        query = query.toLowerCase();
-//
-//    }
+    public void filterData(String query){
+
+        query = query.toLowerCase();
+        Log.d("MyListAdapter", String.valueOf(listDataHeader.size()));
+
+    }
 
     public final class GroupViewHolder {
 
@@ -321,8 +343,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 })
                 .setIcon(R.drawable.ic_alert)
                 .show();
-
     }
-
 
 }

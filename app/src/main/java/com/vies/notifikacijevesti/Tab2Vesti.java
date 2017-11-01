@@ -85,23 +85,23 @@ public class Tab2Vesti extends Fragment {
 
         mRecyclerView.setAdapter(mAdapter);
 
-        button = rootView.findViewById(R.id.button2);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TinyDB tinyDB = new TinyDB(getContext());
-                mAdapter.addData("Термин поправног(писаног) дела испита + Усмени фебруарски рок");
-
-                mAdapter.addTitle("" + counter);
-                counter++;
-
-                mAdapter.addUrl("http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
-
-                mAdapter.notifyItemInserted(0);
-                mRecyclerView.scrollToPosition(0);
-            }
-        });
+//        button = rootView.findViewById(R.id.button2);
+//
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                TinyDB tinyDB = new TinyDB(getContext());
+//                mAdapter.addData("Термин поправног(писаног) дела испита + Усмени фебруарски рок");
+//
+//                mAdapter.addTitle("" + counter);
+//                counter++;
+//
+//                mAdapter.addUrl("http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
+//
+//                mAdapter.notifyItemInserted(0);
+//                mRecyclerView.scrollToPosition(0);
+//            }
+//        });
 
         FloatingActionButton fab = rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

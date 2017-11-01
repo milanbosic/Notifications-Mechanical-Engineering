@@ -43,7 +43,7 @@ public class Tab3Predmeti extends Fragment {
 
         listView = (ExpandableListView) rootView.findViewById(R.id.lvExp);
         initData();
-        listAdapter = new ExpandableListAdapter(this.getContext(), this.listDataHeader, listHash);
+        listAdapter = new ExpandableListAdapter(this.getContext(), this.listDataHeader, listHash, rootView);
         listView.setAdapter(listAdapter);
         final TinyDB tinyDB = new TinyDB(this.getContext());
         savebutton.setOnClickListener(new View.OnClickListener() {

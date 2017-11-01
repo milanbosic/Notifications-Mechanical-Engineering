@@ -7,26 +7,26 @@
     android:orientation="vertical"
     android:animateLayoutChanges="true">
 
-    <Button
-        android:id="@+id/buttonTest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|right"
-        android:paddingTop="10dp"
-        android:text="TEST DODAJ"
-        android:textAlignment="center"/>
-    <Button
-        android:id="@+id/buttonTestDelete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:paddingTop="10dp"
-        android:text="DELETE"
-        android:textAlignment="center"/>
+    <!--<Button-->
+        <!--android:id="@+id/buttonTest"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="top|right"-->
+        <!--android:paddingTop="10dp"-->
+        <!--android:text="TEST DODAJ"-->
+        <!--android:textAlignment="center"/>-->
+    <!--<Button-->
+        <!--android:id="@+id/buttonTestDelete"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="top"-->
+        <!--android:paddingTop="10dp"-->
+        <!--android:text="DELETE"-->
+        <!--android:textAlignment="center"/>-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/istorijaRecyclerView"
-        android:paddingTop="65dp"
+        android:paddingTop="27dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layoutAnimation="@anim/layout_animation_slide_from_bottom"/>
