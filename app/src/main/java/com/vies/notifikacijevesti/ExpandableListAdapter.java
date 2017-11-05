@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +32,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -54,6 +57,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private ArrayList<Boolean> checkedArray;
 
     private ProgressBar mProgressBar;
+    private SearchView mSearchView;
     private ExpandableListView mExpandableListView;
 
     private GroupViewHolder groupViewHolder;
@@ -67,10 +71,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         mView = mainView;
         mChildCheckStates = new HashMap<Integer, Boolean[]>();
         mProgressBar = mainView.findViewById(R.id.progressBar);
+        mSearchView = mainView.findViewById(R.id.search);
         mExpandableListView = mainView.findViewById(R.id.lvExp);
 
         tinyDB = new TinyDB(context);
         mProgressBar.setVisibility(View.INVISIBLE);
+        mSearchView.setVisibility(View.VISIBLE);
         mExpandableListView.setVisibility(View.VISIBLE);
 
         if (tinyDB.contains("selectedSubjects")) {
@@ -239,70 +245,83 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     public void onButtonPress(){
+//        if (new HashSet (mSelectedSubjects).equals(new HashSet(tinyDB.getListString("selectedSubjects")))){
+//
+//        }
+        ArrayList<String> databaseList = tinyDB.getListString("selectedSubjects");
+        if (mSelectedSubjects.containsAll(databaseList) && databaseList.containsAll(mSelectedSubjects)){
+            //Toast.makeText(mContext, "Lista predmeta je ista", Toast.LENGTH_SHORT).show();
+            Snackbar.make(mView, "Lista predmeta je ista", Snackbar.LENGTH_SHORT).show();
+        } else{
+            String url ="http://165.227.154.9:8082/api/";
 
-        String url ="http://91.187.151.209:3000/api/";
+            HashMap<String, String> params = new HashMap<String, String>();
 
-        HashMap<String, String> params = new HashMap<String, String>();
+            params.put("token", FirebaseInstanceId.getInstance().getToken());
+            mProgressBar.setVisibility(View.VISIBLE);
+            mSearchView.setVisibility(View.INVISIBLE);
+            mExpandableListView.setVisibility(View.INVISIBLE);
 
-        params.put("token", FirebaseInstanceId.getInstance().getToken());
-        mProgressBar.setVisibility(View.VISIBLE);
-        mExpandableListView.setVisibility(View.INVISIBLE);
-
-        int i = 0;
-        for(String object: mSelectedSubjects){
-            params.put("topics["+(i++)+"]", object);
-        }
-
-        Response.ErrorListener errorListen = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            VolleyLog.v("responseJson: ", error);
-            serverErrorDialog();
-                mProgressBar.setVisibility(View.INVISIBLE);
-                mExpandableListView.setVisibility(View.VISIBLE);
-
+            int i = 0;
+            for(String object: mSelectedSubjects){
+                params.put("topics["+(i++)+"]", object);
             }
-        };
 
-        Response.Listener<JSONObject> responseListen = new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try{
-                    Log.d("Response: ", response.getString("message"));
-                    if (response.getString("message").contains("Success")){
+            Response.ErrorListener errorListen = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.v("responseJson: ", error);
+                    serverErrorDialog();
+                    mProgressBar.setVisibility(View.INVISIBLE);
+                    mExpandableListView.setVisibility(View.VISIBLE);
 
-                        if (mSelectedSubjects != null) {
-                            tinyDB.putListString("selectedSubjects", mSelectedSubjects);
-                        }
+                }
+            };
 
-                        tinyDB.putListBoolean("oasSelected", oasSelected);
+            Response.Listener<JSONObject> responseListen = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try{
+                        Log.d("Response: ", response.getString("message"));
+                        if (response.getString("message").contains("Success")){
 
-                        tinyDB.putListBoolean("masSelected", masSelected);
+                            if (mSelectedSubjects != null) {
+                                tinyDB.putListString("selectedSubjects", mSelectedSubjects);
+                            }
 
-                        tinyDB.putListBoolean("katedreSelected", katedreSelected);
+                            tinyDB.putListBoolean("oasSelected", oasSelected);
 
-                        tinyDB.putListBoolean("ostaloSelected", ostaloSelected);
-                        Toast.makeText(mContext,  "Успешно сачувано.", Toast.LENGTH_SHORT).show();
+                            tinyDB.putListBoolean("masSelected", masSelected);
+
+                            tinyDB.putListBoolean("katedreSelected", katedreSelected);
+
+                            tinyDB.putListBoolean("ostaloSelected", ostaloSelected);
+//                            Toast.makeText(mContext,  "Успешно сачувано.", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(mView, "Успешно сачувано", Snackbar.LENGTH_SHORT).show();
                             mProgressBar.setVisibility(View.INVISIBLE);
-                        mExpandableListView.setVisibility(View.VISIBLE);
-                    } else{
+                            mSearchView.setVisibility(View.VISIBLE);
+                            mExpandableListView.setVisibility(View.VISIBLE);
+                        } else{
+                            serverErrorDialog();
+                            mProgressBar.setVisibility(View.INVISIBLE);
+                            mSearchView.setVisibility(View.VISIBLE);
+                            mExpandableListView.setVisibility(View.VISIBLE);
+                        }
+                    }catch (JSONException e){
+                        e.printStackTrace();
                         serverErrorDialog();
                         mProgressBar.setVisibility(View.INVISIBLE);
                         mExpandableListView.setVisibility(View.VISIBLE);
                     }
-                }catch (JSONException e){
-                    e.printStackTrace();
-                    serverErrorDialog();
-                    mProgressBar.setVisibility(View.INVISIBLE);
-                    mExpandableListView.setVisibility(View.VISIBLE);
                 }
-            }
-        };
+            };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
-        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, responseListen, errorListen);
+            RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+            CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, responseListen, errorListen);
 
-        requestQueue.add(jsObjRequest);
+            requestQueue.add(jsObjRequest);
+        }
+
     }
 
     @Override

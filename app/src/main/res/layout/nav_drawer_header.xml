@@ -12,7 +12,7 @@
         <!--android:scaleType="centerCrop"-->
         <!--android:src="@drawable/background_poly"/>-->
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -24,30 +24,37 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:textColor="#ffffff"
+            android:layout_alignLeft="@+id/email"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/email"
+            android:layout_marginBottom="14dp"
             android:text="Notifikacije Mašinski fakultet"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textColor="#ffffff"
+            android:textSize="19sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#ffffff"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="5dp"
-            android:textSize="14sp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="45dp"
+            android:textSize="16sp"
+            android:text="Notifikacije o novim vestima"
             android:textStyle="normal"/>
 
-    </LinearLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="14dp"
+            android:layout_marginBottom="70dp"
+            android:src="@mipmap/ic_logo_header"
+            android:id="@+id/circleView"
+            android:layout_marginStart="14dp" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="18dp"
-        android:id="@+id/circleView"/>
-        <!--android:src="@drawable/logo"-->
+    </RelativeLayout>
 
 </RelativeLayout>

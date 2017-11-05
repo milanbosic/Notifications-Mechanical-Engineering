@@ -14,8 +14,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 
 import android.widget.ListView;
@@ -46,15 +49,15 @@ public class MainActivity extends AppCompatActivity {
     Intent mServiceIntent;
     private MyFirebaseMessagingService mSensorService;
 
-    String TITLES[] = {"Вести", "Историја", "Предмети", "Подешавања", "О апликацији"};
+    String TITLES[] = {"Историја", "Вести", "Предмети", "Подешавања", "О апликацији"};
 
-    int ICONS[] = {R.drawable.ic_home,R.drawable.ic_list, R.drawable.ic_events,R.drawable.ic_settings,R.drawable.ic_travel};
+    int ICONS[] = {R.drawable.ic_list, R.drawable.ic_home, R.drawable.ic_events,R.drawable.ic_settings,R.drawable.ic_travel};
 
     //Similarly we Create a String Resource for the name and email in the header view
     //And we also create a int resource for profile picture in the header view
 
-    String NAME = "";
-    String EMAIL = "";
+    String NAME = "Машински факултет";
+    String EMAIL = "Нотификације о новим вестима";
     int PROFILE = R.mipmap.ic_logo_new;
 
     private Toolbar toolbar;                              // Declaring the Toolbar Object
@@ -70,9 +73,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TinyDB tinyDB = new TinyDB(this.getApplicationContext());
-        tinyDB.putString("token", FirebaseInstanceId.getInstance().getToken());
-
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_list_dark);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_home_dark);
         tabLayout.getTabAt(2).setIcon(R.drawable.ic_events_dark);
-
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
@@ -128,6 +127,52 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
         mViewPager.setCurrentItem(1);
 
+
+
+        final GestureDetector mGestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
+
+            @Override public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+
+        });
+
+        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent motionEvent) {
+                View child = mRecyclerView.findChildViewUnder(motionEvent.getX(),motionEvent.getY());
+
+                if(child!=null && mGestureDetector.onTouchEvent(motionEvent)){
+                    int position = mRecyclerView.getChildAdapterPosition(child);
+                    if (position > 0 && position < 4){
+                        Drawer.closeDrawers();
+                        mViewPager.setCurrentItem(mRecyclerView.getChildAdapterPosition(child) - 1);
+
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
+
+//        if (tinyDB.getListString("vesti").size() != 0){
+//            mViewPager.setPagingEnabled(false);
+//        } else{
+//            mViewPager.setPagingEnabled(true);
+//        }
+
+
+
     }
 
     @Override
@@ -146,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
             return true;
         }
 
@@ -156,6 +202,9 @@ public class MainActivity extends AppCompatActivity {
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
+
+
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {

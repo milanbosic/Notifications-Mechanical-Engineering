@@ -47,21 +47,57 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public static String newTitle;
     public static String newUrl;
 
+    private TinyDB tinyDB;
+
     /**
      * Called when message is received.
      *
-     * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
+     * param remoteMessage Object representing the message received from Firebase Cloud Messaging.
      */
     // [START receive_message]
+
+    public void onCreate(){
+        tinyDB = new TinyDB(this.getApplicationContext());
+        tinyDB.putString("token", FirebaseInstanceId.getInstance().getToken());
+        Log.d("tokenfirebase", FirebaseInstanceId.getInstance().getToken());
+    }
 
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        novaVest = remoteMessage.getData().get("body");
-        newTitle = remoteMessage.getData().get("title");
-        newUrl = remoteMessage.getData().get("url");
-        sendNotification(remoteMessage.getData());
+
+        Map<String, String> data = remoteMessage.getData();
+
+        novaVest = data.get("body");
+        newTitle = data.get("title");
+        newUrl = data.get("url");
+
+        ArrayList<String> listData = tinyDB.getListString("vesti");
+        ArrayList<String> listTitles = tinyDB.getListString("titles");
+        ArrayList<String> listUrls = tinyDB.getListString("urls");
+
+        listData.add(0, novaVest);
+        listTitles.add(0, newTitle);
+        listUrls.add(0, newUrl);
+
+        tinyDB.putListString("vesti", listData);
+        tinyDB.putListString("titles", listTitles);
+        tinyDB.putListString("urls", listUrls);
+
+        ArrayList<String> titleSet = tinyDB.getListString("istorijaTitles");
+        ArrayList<String> dataSet = tinyDB.getListString("istorijaData");
+        ArrayList<String> urlSet = tinyDB.getListString("istorijaUrls");
+
+        titleSet.add(0, newTitle);
+        dataSet.add(0, novaVest);
+        urlSet.add(0, newUrl);
+
+        tinyDB.putListString("istorijaTitles", titleSet);
+        tinyDB.putListString("istorijaData", dataSet);
+        tinyDB.putListString("istorijaUrls", urlSet);
+
+        sendNotification(data);
 
         broadcastIntent();
 

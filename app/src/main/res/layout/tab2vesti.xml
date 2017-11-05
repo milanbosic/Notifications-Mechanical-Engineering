@@ -5,14 +5,14 @@
     android:orientation="vertical"
     android:animateLayoutChanges="true">
 
-    <!--<Button-->
-        <!--android:id="@+id/button2"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="top|right"-->
-        <!--android:paddingTop="10dp"-->
-        <!--android:text="TEST DODAJ"-->
-        <!--android:textAlignment="center"/>-->
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:paddingTop="10dp"
+        android:text="TEST DODAJ"
+        android:textAlignment="center"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -39,8 +39,10 @@
         android:id="@+id/emptyVesti"
         android:padding="20dp"
         android:layout_gravity="center"
+        android:layout_marginBottom="55dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:text="@string/empty_vesti" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -23,7 +23,6 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     private int profile;        //int Resource for header view profile picture
     private String email;       //String Resource for header view email
 
-
     // Creating a ViewHolder which extends the RecyclerView View Holder
     // ViewHolder are used to to store the inflated views in order to recycle them
 
@@ -36,11 +35,8 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         TextView Name;
         TextView email;
 
-
         public ViewHolder(View itemView,int ViewType) {                 // Creating ViewHolder Constructor with View and viewType As a parameter
             super(itemView);
-
-
             // Here we set the appropriate view in accordance with the the view type as passed when the holder object is created
 
             if(ViewType == TYPE_ITEM) {
@@ -50,18 +46,13 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             }
             else{
 
-
                 Name = (TextView) itemView.findViewById(R.id.name);         // Creating Text View object from header.xmlader.xml for name
                 email = (TextView) itemView.findViewById(R.id.email);       // Creating Text View object from sidebar_headerr_header.xml for email
                 profile = (ImageView) itemView.findViewById(R.id.circleView);// Creating Image view object from header.xmlader.xml for profile pic
                 Holderid = 0;                                                // Setting holder id = 0 as the object being populated are of type header view
             }
         }
-
-
     }
-
-
 
     NavDrawerAdapter(String Titles[], int Icons[], String Name, String Email, int Profile){ // NavDrawerAdapter Constructor with titles and icons parameter
         // titles, icons, name, email, profile pic are passed from the main activity as we
@@ -71,12 +62,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         email = Email;
         profile = Profile;                     //here we assign those passed values to the values we declared here
         //in adapter
-
-
-
     }
-
-
 
     //Below first we ovverride the method onCreateViewHolder which is called when the ViewHolder is
     //Created, In this method we inflate the item_row.xml layout if the viewType is Type_ITEM or else we inflate header.xmlader.xml
@@ -102,7 +88,6 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             ViewHolder vhHeader = new ViewHolder(v,viewType); //Creating ViewHolder and passing the object of type view
 
             return vhHeader; //returning the object created
-
 
         }
         return null;

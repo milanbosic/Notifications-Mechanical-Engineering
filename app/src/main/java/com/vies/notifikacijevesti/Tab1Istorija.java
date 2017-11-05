@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -31,6 +32,7 @@ public class Tab1Istorija extends Fragment {
     private Button mButtonDelete;
     private IstorijaListAdapter mAdapter;
     private int counter;
+    private TextView emptyText;
     TinyDB tinyDB;
 
     @Override
@@ -46,6 +48,8 @@ public class Tab1Istorija extends Fragment {
         View rootView = inflater.inflate(R.layout.tab1istorija, container, false);
 
         mRecyclerView = rootView.findViewById(R.id.istorijaRecyclerView);
+        emptyText = rootView.findViewById(R.id.emptyVesti1);
+
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         initDataSet();
         mAdapter = new IstorijaListAdapter(titleSet, dataSet, urlSet, getContext(), rootView);
@@ -105,6 +109,7 @@ public class Tab1Istorija extends Fragment {
             titleSet = new ArrayList<>();
             dataSet = new ArrayList<>();
             urlSet = new ArrayList<>();
+            emptyText.setVisibility(View.VISIBLE);
         }
     }
 
