@@ -7,6 +7,7 @@ import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -251,7 +252,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ArrayList<String> databaseList = tinyDB.getListString("selectedSubjects");
         if (mSelectedSubjects.containsAll(databaseList) && databaseList.containsAll(mSelectedSubjects)){
             //Toast.makeText(mContext, "Lista predmeta je ista", Toast.LENGTH_SHORT).show();
-            Snackbar.make(mView, "Lista predmeta je ista", Snackbar.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(mView, "Не можете сачувати исте предмете.", Snackbar.LENGTH_SHORT);
+            View view = snackbar.getView();
+            TextView tv = view.findViewById(android.support.design.R.id.snackbar_text);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+                tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            else
+                tv.setGravity(Gravity.CENTER_HORIZONTAL);
+            snackbar.show();
         } else{
             String url ="http://165.227.154.9:8082/api/";
 
@@ -297,7 +305,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                             tinyDB.putListBoolean("ostaloSelected", ostaloSelected);
 //                            Toast.makeText(mContext,  "Успешно сачувано.", Toast.LENGTH_SHORT).show();
-                            Snackbar.make(mView, "Успешно сачувано", Snackbar.LENGTH_SHORT).show();
+                            Snackbar snackbar = Snackbar.make(mView, "Успешно сачувано.", Snackbar.LENGTH_SHORT);
+                            View view = snackbar.getView();
+                            TextView tv = view.findViewById(android.support.design.R.id.snackbar_text);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+                                tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                            else
+                                tv.setGravity(Gravity.CENTER_HORIZONTAL);
+
+                            snackbar.show();
                             mProgressBar.setVisibility(View.INVISIBLE);
                             mSearchView.setVisibility(View.VISIBLE);
                             mExpandableListView.setVisibility(View.VISIBLE);

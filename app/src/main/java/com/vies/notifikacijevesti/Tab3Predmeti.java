@@ -27,6 +27,7 @@ public class Tab3Predmeti extends Fragment {
     //private List<String> selectedSubjects;
     private Button savebutton;
     private SearchView search;
+    private int lastExpandedPosition = -1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,6 +56,18 @@ public class Tab3Predmeti extends Fragment {
 //                for (int i = 0; i < selectedSubjects.size(); i++){
 //                    Log.d("selected", "" + selectedSubjects.get(i));
 //                }
+            }
+        });
+
+        listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (lastExpandedPosition != -1
+                        && groupPosition != lastExpandedPosition) {
+                    listView.collapseGroup(lastExpandedPosition);
+                }
+                lastExpandedPosition = groupPosition;
             }
         });
 
