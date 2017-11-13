@@ -78,7 +78,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         ArrayList<String> listUrls = tinyDB.getListString("urls");
 
         listData.add(0, novaVest);
-        listTitles.add(0, newTitle);
+        listTitles.add(0,newTitle);
         listUrls.add(0, newUrl);
 
         tinyDB.putListString("vesti", listData);

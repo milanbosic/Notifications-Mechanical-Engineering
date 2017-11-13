@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:padding="8dp"
     android:layout_height="match_parent">
 
+
     <TextView
         android:id="@+id/lbListHeader"
-        android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-        android:textSize="16dp"
-        android:textColor="@color/primaryText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/chckBoxGroup"
+        android:layout_toStartOf="@+id/chckBoxGroup"
+        android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
+        android:textSize="15sp"
+        android:textColor="@color/primaryText"
+        android:layout_centerInParent="true"
+        android:focusableInTouchMode="false"
+        android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft" />
 
-</LinearLayout>
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/chckBoxGroup"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="3dp"
+        android:focusable="false"
+        android:layout_alignParentTop="true"
+        android:gravity="center|right"
+        android:layout_alignParentEnd="true" />
+
+
+</RelativeLayout>

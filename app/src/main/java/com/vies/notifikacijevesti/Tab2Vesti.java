@@ -114,7 +114,7 @@ public class Tab2Vesti extends Fragment {
 //                Snackbar.make(view, "Sve vesti su obrisane.", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 mAdapter.clearAll();
-                Toast.makeText(getContext(),  "Све вести су обрисане.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),  "Sve vesti su obrisane.", Toast.LENGTH_SHORT).show();
             }
         });
 

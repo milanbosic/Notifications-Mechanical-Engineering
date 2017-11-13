@@ -13,6 +13,7 @@
     <CheckBox
         android:id="@+id/checkBoxListItem"
         android:text=""
+        android:textSize="14sp"
         android:textColor="@color/primaryText"
         android:focusable="false"
         android:focusableInTouchMode="false"

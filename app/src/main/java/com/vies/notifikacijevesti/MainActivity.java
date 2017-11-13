@@ -49,15 +49,15 @@ public class MainActivity extends AppCompatActivity {
     Intent mServiceIntent;
     private MyFirebaseMessagingService mSensorService;
 
-    String TITLES[] = {"Историја", "Вести", "Предмети", "Подешавања", "О апликацији"};
+    String TITLES[] = {"Istorija", "Vesti", "Predmeti", "Podešavanja", "O aplikaciji"};
 
     int ICONS[] = {R.drawable.ic_list, R.drawable.ic_home, R.drawable.ic_events,R.drawable.ic_settings,R.drawable.ic_travel};
 
     //Similarly we Create a String Resource for the name and email in the header view
     //And we also create a int resource for profile picture in the header view
 
-    String NAME = "Машински факултет";
-    String EMAIL = "Нотификације о новим вестима";
+    String NAME = "Mašinski fakultet";
+    String EMAIL = "Notifikacije o novim vestima";
     int PROFILE = R.mipmap.ic_logo_new;
 
     private Toolbar toolbar;                              // Declaring the Toolbar Object
@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_list_dark);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_home_dark);
         tabLayout.getTabAt(2).setIcon(R.drawable.ic_events_dark);
+
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
@@ -148,6 +149,9 @@ public class MainActivity extends AppCompatActivity {
                         Drawer.closeDrawers();
                         mViewPager.setCurrentItem(mRecyclerView.getChildAdapterPosition(child) - 1);
 
+                    } else if(position==4){
+                        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                        startActivity(intent);
                     }
                     return true;
                 }
@@ -191,6 +195,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
 
             return true;
         }
@@ -238,11 +244,11 @@ public class MainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Историја";
+                    return "Istorija";
                 case 1:
-                    return "Вести";
+                    return "Vesti";
                 case 2:
-                    return "Предмети";
+                    return "Predmeti";
             }
             return null;
         }
