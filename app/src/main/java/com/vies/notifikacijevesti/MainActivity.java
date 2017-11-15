@@ -42,14 +42,8 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    private String[] mPlanetTitles;
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private TextView testText;
-    Intent mServiceIntent;
-    private MyFirebaseMessagingService mSensorService;
 
-    String TITLES[] = {"Istorija", "Vesti", "Predmeti", "Podešavanja", "O aplikaciji"};
+    String TITLES[] = {"Istorija", "Vesti", "Predmeti", "Podešavanja", "Feedback"};
 
     int ICONS[] = {R.drawable.ic_list, R.drawable.ic_home, R.drawable.ic_events,R.drawable.ic_settings,R.drawable.ic_travel};
 
@@ -152,6 +146,9 @@ public class MainActivity extends AppCompatActivity {
                     } else if(position==4){
                         Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                         startActivity(intent);
+                    } else if (position == 5){
+                        Intent intent = new Intent(getApplicationContext(), FeedbackActivity.class);
+                        startActivity(intent);
                     }
                     return true;
                 }
@@ -196,6 +193,13 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+
+            return true;
+        }
+
+        if (id == R.id.action_feedback) {
+            Intent intent = new Intent(this, FeedbackActivity.class);
             startActivity(intent);
 
             return true;

@@ -8,7 +8,16 @@
     <string name="grid_layout_manager">Grid Layout Manager</string>
     <string name="linear_layout_manager">Linear Layout Manager</string>
     <string name="empty_vesti">Nemate novih vesti.</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_settings">Podešavanja</string>
+
+    <string name="title_activity_feedback">Feedback</string>
+
+    <string-array name="categories_array">
+        <item>Interfejs</item>
+        <item>Funkcionalnost</item>
+        <item>Performanse</item>
+        <item>Drugo</item>
+    </string-array>
 
     <!-- Strings related to Settings -->
 
@@ -24,14 +33,14 @@
 
     <!--<string name="pref_title_add_friends_to_messages">Add friends to messages</string>-->
     <!--<string-array name="pref_example_list_titles">-->
-        <!--<item>Always</item>-->
-        <!--<item>When possible</item>-->
-        <!--<item>Never</item>-->
+    <!--<item>Always</item>-->
+    <!--<item>When possible</item>-->
+    <!--<item>Never</item>-->
     <!--</string-array>-->
     <!--<string-array name="pref_example_list_values">-->
-        <!--<item>1</item>-->
-        <!--<item>0</item>-->
-        <!--<item>-1</item>-->
+    <!--<item>1</item>-->
+    <!--<item>0</item>-->
+    <!--<item>-1</item>-->
     <!--</string-array>-->
 
     <!-- Example settings for Notifications -->

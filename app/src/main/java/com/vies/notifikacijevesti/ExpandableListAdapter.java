@@ -194,21 +194,35 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             groupViewHolder = (GroupViewHolder) convertView.getTag();
         }
 
+        CheckBox checkBox = convertView.findViewById(R.id.chckBoxGroup);
+
         groupViewHolder.mGroupText.setTypeface(null, Typeface.BOLD);
         groupViewHolder.mGroupText.setText(headerTitle);
         groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(null);
 
-//        switch (groupPosition){
-//            case 0:
-//                if (areAllTrue(oasSelected)) groupViewHolder.mGroupCheckBox.setChecked(true);
-//                break;
-//            case 1:
-//                if (areAllTrue(masSelected)) groupViewHolder.mGroupCheckBox.setChecked(true);
-//                break;
-//            case 2:
-//                if (areAllTrue(katedreSelected)) groupViewHolder.mGroupCheckBox.setChecked(true);
-//                break;
-//        }
+        switch (groupPosition){
+            case 0:
+                if (areAllTrue(oasSelected)) {
+                    groupViewHolder.mGroupCheckBox.setChecked(true);
+                } else{
+                    groupViewHolder.mGroupCheckBox.setChecked(false);
+                }
+                break;
+            case 1:
+                if (areAllTrue(masSelected)) {
+                    groupViewHolder.mGroupCheckBox.setChecked(true);
+                } else{
+                    groupViewHolder.mGroupCheckBox.setChecked(false);
+                }
+                break;
+            case 2:
+                if (areAllTrue(katedreSelected)) {
+                    groupViewHolder.mGroupCheckBox.setChecked(true);
+                } else{
+                    groupViewHolder.mGroupCheckBox.setChecked(false);
+                }
+                break;
+        }
 
         groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(new MyOnCheckedChangeListener(groupPosition, isExpanded));
 
@@ -295,8 +309,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 }
                 Log.d("selectedsubjects", mSelectedSubjects.get(i));
             }
-                mExpandableListView.collapseGroup(groupPosition);
-                mExpandableListView.expandGroup(groupPosition);
+            notifyDataSetChanged();
+
+//                mExpandableListView.collapseGroup(groupPosition);
+//                mExpandableListView.expandGroup(groupPosition);
 
 
 
@@ -529,15 +545,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 Log.d("selectedsubjects", mSelectedSubjects.get(i));
             }
 
+            notifyDataSetChanged();
             if (isExpanded){
-                mExpandableListView.collapseGroup(groupPosition);
-                mExpandableListView.expandGroup(groupPosition);
+//                mExpandableListView.collapseGroup(groupPosition);
+//                mExpandableListView.expandGroup(groupPosition);
             } else{
-                mExpandableListView.expandGroup(groupPosition);
-                mExpandableListView.collapseGroup(groupPosition);
+//                mExpandableListView.expandGroup(groupPosition);
+//                mExpandableListView.collapseGroup(groupPosition);
             }
-
-
 
 //                if (!isExpanded){
 //                    mExpandableListView.expandGroup(groupPosition);
@@ -549,9 +564,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 //                Object child = getChild(groupPosition, 0);
             //childViewHolder.mCheckBox.setChecked(ndroid exp);
 
-
         }
-
     }
 
     private boolean areAllTrue(ArrayList<Boolean> array){
