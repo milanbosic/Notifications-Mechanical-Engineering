@@ -9,24 +9,24 @@
     tools:context=".MainActivity"
     android:animateLayoutChanges="true">
 
-    <SearchView
-        android:id="@+id/search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:focusable="false"
-        android:focusableInTouchMode="true"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/saveButton"
-        android:layout_toStartOf="@+id/saveButton"
-        android:iconifiedByDefault="false" />
+    <!--<SearchView-->
+        <!--android:id="@+id/search"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:focusable="false"-->
+        <!--android:focusableInTouchMode="false"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_toLeftOf="@+id/saveButton"-->
+        <!--android:layout_toStartOf="@+id/saveButton"-->
+        <!--android:iconifiedByDefault="false" />-->
 
     <ExpandableListView
         android:id="@+id/lvExp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="35dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="10dp"
         android:layout_below="@+id/saveButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
@@ -46,8 +46,6 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/search"
-        android:paddingTop="50dp"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center" />
 

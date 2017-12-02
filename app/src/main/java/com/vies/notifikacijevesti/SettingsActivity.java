@@ -2,6 +2,7 @@ package com.vies.notifikacijevesti;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.Ringtone;
@@ -12,13 +13,18 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.support.constraint.solver.ArrayLinkedVariables;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -120,6 +126,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
+
+
     }
 
     @Override
@@ -181,6 +189,53 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
+
+            Preference button = findPreference("button_key");
+            button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    AlertDialog.Builder builder;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        builder = new AlertDialog.Builder(getActivity(), android.R.style.Theme_Material_Light_Dialog_Alert);
+                    } else {
+                        builder = new AlertDialog.Builder(getActivity());
+                    }
+                    builder.setMessage("Da li ste sigurni da želite da obrišete istoriju vesti?")
+                            .setPositiveButton("Ne", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //code for what you want it to do
+
+                                }
+                            })
+                            .setNegativeButton("Da", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    TinyDB tinyDB = new TinyDB(getActivity());
+
+                                    ArrayList<String> titleSet = tinyDB.getListString("istorijaTitles");
+                                    ArrayList<String> dataSet = tinyDB.getListString("istorijaData");
+                                    ArrayList<String> urlSet = tinyDB.getListString("istorijaUrls");
+
+                                    titleSet.clear();
+                                    dataSet.clear();
+                                    urlSet.clear();
+
+                                    tinyDB.putListString("istorijaTitles", titleSet);
+                                    tinyDB.putListString("istorijaData", dataSet);
+                                    tinyDB.putListString("istorijaUrls", urlSet);
+                                    Intent intent = new Intent();
+                                    intent.setAction("com.notifikacijevesti.refreshhistory");
+                                    intent.putExtra("extraString", "deleteActivity");
+
+                                    LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                                }
+                            })
+                            .setIcon(R.drawable.ic_alert)
+                            .show();
+                    return true;
+                }
+            });
+
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are

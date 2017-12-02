@@ -1,17 +1,32 @@
 package com.vies.notifikacijevesti;
 
+import android.graphics.Color;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 
 /**
@@ -28,6 +43,7 @@ public class Tab3Predmeti extends Fragment {
     private Button savebutton;
     private SearchView search;
     private int lastExpandedPosition = -1;
+    int counter = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,12 +66,7 @@ public class Tab3Predmeti extends Fragment {
         savebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //SLANJE SAJKU
                 listAdapter.onButtonPress();
-//
-//                for (int i = 0; i < selectedSubjects.size(); i++){
-//                    Log.d("selected", "" + selectedSubjects.get(i));
-//                }
             }
         });
 
@@ -68,6 +79,67 @@ public class Tab3Predmeti extends Fragment {
                     listView.collapseGroup(lastExpandedPosition);
                 }
                 lastExpandedPosition = groupPosition;
+            }
+        });
+        if (!tinyDB.contains("firstTime")){
+            listView.expandGroup(0);
+            View view = getActivity().findViewById(R.id.tabs);
+
+            ShowcaseConfig config = new ShowcaseConfig();
+            config.setDelay(500);
+
+            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity());
+
+            sequence.setOnItemDismissedListener(new MaterialShowcaseSequence.OnSequenceItemDismissedListener() {
+                @Override
+                public void onDismiss(MaterialShowcaseView materialShowcaseView, int i) {
+
+                    if (counter == 2){
+                        tinyDB.putBoolean("firstTime", true);
+                    }
+                    counter++;
+                }
+            });
+            sequence.setConfig(config);
+
+            sequence.addSequenceItem(
+                    new MaterialShowcaseView.Builder(getActivity())
+                            .setTarget(listView)
+                            .setContentText("Prvo obeležite predmete za koje želite da vam stižu notifikacije.")
+                            .setDismissOnTouch(true)
+                            .build()
+            );
+            sequence.addSequenceItem(
+                    new MaterialShowcaseView.Builder(getActivity())
+                            .setTarget(savebutton)
+                            .setContentText("Zatim dodirnete dugme da biste sačuvali izbor.")
+                            .setDismissOnTouch(true)
+                            .build()
+            );
+            sequence.addSequenceItem(
+                    new MaterialShowcaseView.Builder(getActivity())
+                            .setTarget(view)
+                            .setContentText("U tabu \"Vesti\" će se pojavljivati nepročitane vesti, a tab \"Istorija\" sadrži istorijat svih pristiglih vesti.")
+                            .setDismissOnTouch(true)
+                            .withRectangleShape(true)
+                            .build()
+            );
+
+            sequence.start();
+//                    new MaterialShowcaseView.Builder(getActivity())
+//                            .setTarget(listView)
+//                            .setDismissText("O")
+//                            .setContentText("This is some amazing feature you should know about")
+//                            .setDelay(300)
+//                            .show();
+        }
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+
+
             }
         });
 

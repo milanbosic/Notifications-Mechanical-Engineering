@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
@@ -13,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -66,12 +68,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean notificationPref = sharedPref.getBoolean("notifications_new_message", true);
 
         Map<String, String> data = remoteMessage.getData();
 
         novaVest = data.get("body");
         newTitle = data.get("title");
         newUrl = data.get("url");
+
+//        novaVest = "test1vest";
+//        newTitle = "test1naslov";
+//        newUrl = "http://www.google.com";
 
         ArrayList<String> listData = tinyDB.getListString("vesti");
         ArrayList<String> listTitles = tinyDB.getListString("titles");
@@ -97,9 +105,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         tinyDB.putListString("istorijaData", dataSet);
         tinyDB.putListString("istorijaUrls", urlSet);
 
-        sendNotification(data);
-
         broadcastIntent();
+
+        if (notificationPref) {
+
+            sendNotification(data);
+        }
 
     }
 
@@ -112,18 +123,32 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Intent intent1 = new Intent();
         intent1.setAction("com.notifikacijevesti.refreshhistory");
+        intent1.putExtra("extraString", "firebase");
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent1);
 
     }
 
     private void sendNotification(Map<String, String> notification) {
         int requestID = (int) System.currentTimeMillis();
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(notification.get("url")));
 
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, requestID , intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//      Uri sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.solemn);
-        Uri defaultSoundUri= getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String ringtonePreference = sharedPrefs.getString("notifications_new_message_ringtone", "DEFAULT_SOUND");
+        Uri ringtoneuri = Uri.parse(ringtonePreference);
+        boolean vibrate = sharedPrefs.getBoolean("notifications_new_message_vibrate", true);
+
+        //Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(notification.get("url")));
+
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        Intent[] intents = new Intent[2];
+        intents[0] = new Intent(this, NotificationClickReceiver.class);
+        Log.d("test123", "LOG 1: vest je primljena");
+        intents[0].putExtra("vestExtra", notification.get("body"));
+        intents[0].setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intents[1] = new Intent(Intent.ACTION_VIEW, Uri.parse(notification.get("url")));
+        intents[1].setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivities(this, requestID , intents, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder notificationBuilder =
 
@@ -133,17 +158,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .setContentTitle(notification.get("title"))
                     .setContentText(notification.get("body"))
                     .setAutoCancel(true)
-                    .setSound(defaultSoundUri)
+                    .setSound(ringtoneuri)
                     .setContentIntent(pendingIntent)
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(notification.get("body")));
 
         NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
+        if (vibrate){
+            notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
+        }
+
         notificationBuilder.setLights(Color.BLUE, 1000, 300);
 
         notificationManager.notify(requestID, notificationBuilder.build());
+
+
     }
 
     public void onTokenRefresh(){

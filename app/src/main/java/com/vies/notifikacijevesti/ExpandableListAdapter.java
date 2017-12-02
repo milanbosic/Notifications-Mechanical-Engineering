@@ -77,14 +77,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         mView = mainView;
         mChildCheckStates = new HashMap<Integer, Boolean[]>();
         mProgressBar = mainView.findViewById(R.id.progressBar);
-        mSearchView = mainView.findViewById(R.id.search);
+        //mSearchView = mainView.findViewById(R.id.search);
         mExpandableListView = mainView.findViewById(R.id.lvExp);
 
         tinyDB = new TinyDB(context);
 
 
         mProgressBar.setVisibility(View.INVISIBLE);
-        mSearchView.setVisibility(View.VISIBLE);
+        //mSearchView.setVisibility(View.VISIBLE);
         mExpandableListView.setVisibility(View.VISIBLE);
 
         if (tinyDB.contains("selectedSubjects")) {
@@ -353,7 +353,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
             params.put("token", FirebaseInstanceId.getInstance().getToken());
             mProgressBar.setVisibility(View.VISIBLE);
-            mSearchView.setVisibility(View.INVISIBLE);
+//            mSearchView.setVisibility(View.INVISIBLE);
             mExpandableListView.setVisibility(View.INVISIBLE);
 
             int i = 0;
@@ -401,12 +401,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                         snackbar.show();
                         mProgressBar.setVisibility(View.INVISIBLE);
-                        mSearchView.setVisibility(View.VISIBLE);
+//                        mSearchView.setVisibility(View.VISIBLE);
                         mExpandableListView.setVisibility(View.VISIBLE);
                     } else{
                         serverErrorDialog();
                         mProgressBar.setVisibility(View.INVISIBLE);
-                        mSearchView.setVisibility(View.VISIBLE);
+//                        mSearchView.setVisibility(View.VISIBLE);
                         mExpandableListView.setVisibility(View.VISIBLE);
                     }
                 }catch (JSONException e){

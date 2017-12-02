@@ -82,30 +82,52 @@ public class Tab2Vesti extends Fragment {
 
         mRecyclerView = rootView.findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(mRecyclerView);
+//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+//        itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         mAdapter = new VestiListAdapter(mDataset, mTitlesSet, mUrlsSet, getContext(), rootView);
 
         mRecyclerView.setAdapter(mAdapter);
 
-        button = rootView.findViewById(R.id.button2);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TinyDB tinyDB = new TinyDB(getContext());
-                mAdapter.addData("Термин поправног(писаног) дела испита + Усмени фебруарски рок");
-
-                mAdapter.addTitle("" + counter);
-                counter++;
-
-                mAdapter.addUrl("http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
-
-                mAdapter.notifyItemInserted(0);
-                mRecyclerView.scrollToPosition(0);
-            }
-        });
+//        button = rootView.findViewById(R.id.button2);
+//
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                TinyDB tinyDB = new TinyDB(getContext());
+//                ArrayList<String> listData = tinyDB.getListString("vesti");
+//                ArrayList<String> listTitles = tinyDB.getListString("titles");
+//                ArrayList<String> listUrls = tinyDB.getListString("urls");
+//
+//                listTitles.add(0,"" + counter);
+//                listData.add(0, "Термин поправног(писаног) делaаaa испита + Усмени фебруарски рок");
+//                listUrls.add(0, "http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
+//
+//                tinyDB.putListString("titles", listTitles);
+//                tinyDB.putListString("vesti", listData);
+//                tinyDB.putListString("urls", listUrls);
+//
+//                ArrayList<String> titleSet = tinyDB.getListString("istorijaTitles");
+//                ArrayList<String> dataSet = tinyDB.getListString("istorijaData");
+//                ArrayList<String> urlSet = tinyDB.getListString("istorijaUrls");
+//
+//                titleSet.add(0, "" + counter);
+//                dataSet.add(0, "Термин поправног(писаног) делaаaa испита + Усмени фебруарски рок");
+//                urlSet.add(0, "http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
+//
+//                tinyDB.putListString("istorijaTitles", titleSet);
+//                tinyDB.putListString("istorijaData", dataSet);
+//                tinyDB.putListString("istorijaUrls", urlSet);
+//
+//                mAdapter.addTitle("" + counter);
+//                mAdapter.addData("Термин поправног(писаног) делаaaa испита + Усмени фебруарски рок");
+//                mAdapter.addUrl("http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
+//                counter++;
+//
+//                mAdapter.notifyItemInserted(0);
+//                mRecyclerView.scrollToPosition(0);
+//            }
+//        });
 
         FloatingActionButton fab = rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -126,12 +148,21 @@ public class Tab2Vesti extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-        mAdapter.addData(MyFirebaseMessagingService.novaVest);
-        mAdapter.addTitle(MyFirebaseMessagingService.newTitle);
-        mAdapter.addUrl(MyFirebaseMessagingService.newUrl);
+            if (intent.getBooleanExtra("shouldDelete", false)){
+                String vest = intent.getStringExtra("vest");
+                Integer index = tinyDB.getListString("vesti").indexOf(vest);
+                Log.d("test123", "LOG 3: Index at Tab2Vesti " + index + "vest: " + vest);
+                if (index != -1) mAdapter.removeAt(index);
+                mAdapter.notifyDataSetChanged();
+            } else{
+                mAdapter.addData(MyFirebaseMessagingService.novaVest);
+                mAdapter.addTitle(MyFirebaseMessagingService.newTitle);
+                mAdapter.addUrl(MyFirebaseMessagingService.newUrl);
 
-        mAdapter.notifyItemInserted(0);
-        mRecyclerView.scrollToPosition(0);
+                mAdapter.notifyItemInserted(0);
+                mRecyclerView.scrollToPosition(0);
+            }
+
         }
     };
 
@@ -165,18 +196,18 @@ public class Tab2Vesti extends Fragment {
         }
     }
 
-    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-
-        @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            return false;
-        }
-
-        @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-            mAdapter.removeAt(viewHolder.getAdapterPosition());
-        }
-
-    };
+//    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+//
+//        @Override
+//        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+//            return false;
+//        }
+//
+//        @Override
+//        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+//            mAdapter.removeAt(viewHolder.getAdapterPosition());
+//        }
+//
+//    };
 }
 

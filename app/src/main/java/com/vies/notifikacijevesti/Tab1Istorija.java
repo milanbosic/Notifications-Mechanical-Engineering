@@ -74,19 +74,19 @@ public class Tab1Istorija extends Fragment {
         mAdapter = new IstorijaListAdapter(titleSet, dataSet, urlSet, getContext(), rootView);
         mRecyclerView.setAdapter(mAdapter);
 
-        mButton = rootView.findViewById(R.id.buttonTest);
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
+//        mButton = rootView.findViewById(R.id.buttonTest);
+//        mButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
 //                mAdapter.addTitle(" " + counter);
 //                mAdapter.addData("test");
 //                mAdapter.addUrl("http://www.google.com");
 //                mAdapter.notifyItemInserted(0);
 //                mRecyclerView.scrollToPosition(0);
 //                counter++;
-            }
-        });
+//            }
+//        });
 
 //        mButtonDelete = rootView.findViewById(R.id.buttonTestDelete);
 //        mButtonDelete.setOnClickListener(new View.OnClickListener() {
@@ -118,13 +118,22 @@ public class Tab1Istorija extends Fragment {
     private BroadcastReceiver onNotice = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            String string = intent.getStringExtra("extraString");
+            if (string.equals("deleteActivity")){
 
-            mAdapter.addData(MyFirebaseMessagingService.novaVest);
-            mAdapter.addTitle(MyFirebaseMessagingService.newTitle);
-            mAdapter.addUrl(MyFirebaseMessagingService.newUrl);
+                mAdapter.clearAll();
+                mAdapter.notifyDataSetChanged();
 
-            mAdapter.notifyItemInserted(0);
-            mRecyclerView.scrollToPosition(0);
+            } else {
+
+                mAdapter.addData(MyFirebaseMessagingService.novaVest);
+                mAdapter.addTitle(MyFirebaseMessagingService.newTitle);
+                mAdapter.addUrl(MyFirebaseMessagingService.newUrl);
+
+                mAdapter.notifyItemInserted(0);
+                mRecyclerView.scrollToPosition(0);
+            }
+
         }
     };
 

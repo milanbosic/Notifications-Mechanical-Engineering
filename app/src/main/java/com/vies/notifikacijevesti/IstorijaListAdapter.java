@@ -68,13 +68,14 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.istorija_list_item, parent, false);
         ViewHolder vh = new ViewHolder(v);
+
         return vh;
     }
 
     @Override
     public void onBindViewHolder(IstorijaListAdapter.ViewHolder holder, int position) {
-        holder.getTextViewTitle().setText(mTitlesSet.get(position));
         holder.getTextViewData().setText(mDataSet.get(position));
+        holder.getTextViewTitle().setText(mTitlesSet.get(position));
         if (mTitlesSet.size() == 0){
 
             empty.setVisibility(View.VISIBLE);

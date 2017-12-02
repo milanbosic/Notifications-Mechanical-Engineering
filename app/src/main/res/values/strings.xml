@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Notifikacije Mašisnki</string>
+    <string name="app_name">Notifikacije Mašinski</string>
     <string name="action_settings">Podešavanja</string>
     <string name="openDrawer">Open Drawer </string>
     <string name="closeDrawer">Close Drawer </string>
@@ -23,10 +23,6 @@
 
     <!-- Example General settings -->
     <string name="pref_header_general">Opšte</string>
-
-    <string name="pref_title_social_recommendations">Test</string>
-    <string name="pref_description_social_recommendations">test
-    </string>
 
     <!--<string name="pref_title_display_name">Display name</string>-->
     <!--<string name="pref_default_display_name">John Smith</string>-->
@@ -52,4 +48,16 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibracija</string>
+    <string name="title_activity_about">O aplikaciji</string>
+
+    <string name="about_naslov">Notifikacije vesti Mašinskog fakulteta</string>
+    <string name="about_tekst1">Cilj aplikacije je olakšavanje praćenja novih vesti vezanih za predmete na Mašinskom fakultetu.</string>
+    <string name="about_tekst2">Kako se koristi?</string>
+
+    <string name="about_tekst3">Obeležite predmete za koje želite da primate notifikacije i dodirnite dugme <b>&quot;Sačuvaj&quot;</b>.
+        Kada se objavi nova vest, stići će vam notifikacija. Ukoliko je ne otvorite, već želite da pogledate kasnije, vest će biti zapisana na tabu <b>&quot;Vesti&quot;</b>.
+        \n\nTab &quot;<b>Istorija</b>&quot; sadrži poslednjih 15 vesti, Bez obzira na to da li ste ih pročitali ili ne.</string>
+
+    <string name="about_tekst4"><b>Autori aplikacije:\n\nMilan Bosić\nNikola Šajković</b></string>
+
 </resources>

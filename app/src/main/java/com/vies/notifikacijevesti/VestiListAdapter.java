@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -39,11 +41,18 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
 
             textViewTitle = v.findViewById(R.id.textViewTitle);
             textViewData = v.findViewById(R.id.textViewData);
+            ImageButton button = (ImageButton) v.findViewById(R.id.delVestiButton);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getAdapterPosition() != -1)
+                    removeAt(getAdapterPosition());
+                }
+            });
             // Define click listener for the ViewHolder's View.
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "Element " + getAdapterPosition() + " clicked.");
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrlsSet.get(getAdapterPosition())));
                     context.startActivity(browserIntent);
                     removeAt(getAdapterPosition());

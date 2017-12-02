@@ -1,6 +1,7 @@
 package com.vies.notifikacijevesti;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,10 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
+import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
-    String TITLES[] = {"Istorija", "Vesti", "Predmeti", "Podešavanja", "Feedback"};
+    String TITLES[] = {"Istorija", "Vesti", "Predmeti", "Podešavanja", "Feedback", "O aplikaciji"};
 
-    int ICONS[] = {R.drawable.ic_list, R.drawable.ic_home, R.drawable.ic_events,R.drawable.ic_settings,R.drawable.ic_travel};
+    int ICONS[] = {R.drawable.ic_list, R.drawable.ic_home, R.drawable.ic_events,R.drawable.ic_settings,R.drawable.ic_feedback, R.drawable.ic_info};
 
     //Similarly we Create a String Resource for the name and email in the header view
     //And we also create a int resource for profile picture in the header view
@@ -63,9 +68,13 @@ public class MainActivity extends AppCompatActivity {
 
     ActionBarDrawerToggle mDrawerToggle;                  // Declaring Action Bar Drawer Toggle
 
+    Button saveButton1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        TinyDB tinyDB = new TinyDB(this);
 
         setContentView(R.layout.activity_main);
 
@@ -84,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_list_dark);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_home_dark);
         tabLayout.getTabAt(2).setIcon(R.drawable.ic_events_dark);
-
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
@@ -120,9 +128,13 @@ public class MainActivity extends AppCompatActivity {
 
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
-        mViewPager.setCurrentItem(1);
 
+        if (!tinyDB.contains("firstTime")){
+            mViewPager.setCurrentItem(2);
 
+        } else{
+            mViewPager.setCurrentItem(1);
+        }
 
         final GestureDetector mGestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
 
@@ -143,11 +155,14 @@ public class MainActivity extends AppCompatActivity {
                         Drawer.closeDrawers();
                         mViewPager.setCurrentItem(mRecyclerView.getChildAdapterPosition(child) - 1);
 
-                    } else if(position==4){
+                    } else if(position == 4){
                         Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                         startActivity(intent);
                     } else if (position == 5){
                         Intent intent = new Intent(getApplicationContext(), FeedbackActivity.class);
+                        startActivity(intent);
+                    } else if (position == 6){
+                        Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
                         startActivity(intent);
                     }
                     return true;
@@ -165,12 +180,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-//        if (tinyDB.getListString("vesti").size() != 0){
-//            mViewPager.setPagingEnabled(false);
-//        } else{
-//            mViewPager.setPagingEnabled(true);
-//        }
 
 
 
@@ -194,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
+
 
             return true;
         }
