@@ -18,6 +18,7 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="4dp"
         android:layoutAnimation="@anim/layout_animation_slide_from_bottom"/>
 
     <android.support.design.widget.FloatingActionButton

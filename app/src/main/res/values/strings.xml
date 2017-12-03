@@ -60,4 +60,8 @@
 
     <string name="about_tekst4"><b>Autori aplikacije:\n\nMilan Bosić\nNikola Šajković</b></string>
 
+    <string name="drawer_header_1">Notifikacije Mašinski fakultet</string>
+    <string name="drawer_header_2">Notifikacije o novim vestima</string>
+    <string name="save">Sačuvaj</string>
+
 </resources>

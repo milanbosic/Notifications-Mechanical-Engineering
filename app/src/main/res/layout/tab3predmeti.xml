@@ -39,7 +39,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:textColor="@color/primaryText"
-        android:text="Sačuvaj" />
+        android:text="@string/save" />
 
     <ProgressBar
         android:id="@+id/progressBar"
