@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         TinyDB tinyDB = new TinyDB(this);
+        Log.d("test123", "db: " + tinyDB.getString("closedString"));
 
         setContentView(R.layout.activity_main);
 

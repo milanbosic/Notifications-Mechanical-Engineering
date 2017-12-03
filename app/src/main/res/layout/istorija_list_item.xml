@@ -20,7 +20,7 @@
                 android:id="@+id/textViewIstorijaTitle"
                 android:textStyle="bold"
                 android:paddingTop="2dp"
-                android:paddingLeft="10dp"
+                android:paddingLeft="8dp"
                 android:layout_width="match_parent"
                 android:gravity="center_vertical"
                 android:layout_height="50dp" />
@@ -28,7 +28,7 @@
                 android:id="@+id/textViewIstorijaData"
                 android:layout_below="@+id/textViewIstorijaTitle"
                 android:gravity="center_vertical"
-                android:paddingLeft="10dp"
+                android:paddingLeft="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="50dp" />
         </RelativeLayout>

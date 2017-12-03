@@ -20,6 +20,10 @@ public class NotificationClickReceiver extends AppCompatActivity{
 
         Log.d("test123", "LOG 2: Primljena vest NotificationClickReceiver " + vest);
 
+        TinyDB tinyDB = new TinyDB(getApplicationContext());
+
+        tinyDB.putString("closedString", "asdf");
+
         Intent intent1 = new Intent();
         intent1.putExtra("shouldDelete", true);
         intent1.putExtra("vest", vest);
