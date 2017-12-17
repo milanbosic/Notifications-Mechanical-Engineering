@@ -1,6 +1,7 @@
 package com.vies.notifikacijevesti;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -49,6 +51,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public static String newTitle;
     public static String newUrl;
 
+    private static final int NOTIFICATION_ID = 1;
+    private static final String NOTIFICATION_CHANNEL_ID = "my_notification_channel";
+
     private TinyDB tinyDB;
 
     /**
@@ -61,7 +66,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onCreate(){
         tinyDB = new TinyDB(this.getApplicationContext());
         tinyDB.putString("token", FirebaseInstanceId.getInstance().getToken());
-        Log.d("tokenfirebase", FirebaseInstanceId.getInstance().getToken());
     }
 
 
@@ -79,7 +83,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 //        novaVest = "test1vest";
 //        newTitle = "test1naslov";
-//        newUrl = "http://www.google.com";
+//        newUrl = "http://www.leetcode.com";
 
         ArrayList<String> listData = tinyDB.getListString("vesti");
         ArrayList<String> listTitles = tinyDB.getListString("titles");
@@ -129,49 +133,93 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendNotification(Map<String, String> notification) {
+//        int requestID = (int) System.currentTimeMillis();
+//
+//        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+//        String ringtonePreference = sharedPrefs.getString("notifications_new_message_ringtone", "DEFAULT_SOUND");
+//        Uri ringtoneuri = Uri.parse(ringtonePreference);
+//        boolean vibrate = sharedPrefs.getBoolean("notifications_new_message_vibrate", true);
+//
+//        Intent[] intents = new Intent[2];
+//        intents[0] = new Intent(this, NotificationClickReceiver.class);
+//        Log.d("test123", "LOG 1: vest je primljena");
+//        intents[0].putExtra("vestExtra", notification.get("body"));
+//        intents[0].setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intents[1] = new Intent(Intent.ACTION_VIEW, Uri.parse(notification.get("url")));
+//        intents[1].setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//
+//        PendingIntent pendingIntent = PendingIntent.getActivities(this, requestID , intents, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+//
+//            // Configure the notification channel.
+//            notificationChannel.setDescription("Defaultni channel");
+//            notificationChannel.enableLights(true);
+//            notificationChannel.setLightColor(Color.BLUE);
+//            notificationChannel.enableVibration(vibrate);
+//            notificationManager.createNotificationChannel(notificationChannel);
+//        }
+//
+//        NotificationCompat.Builder notificationBuilder =
+//
+//            new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+//                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_logo_new))
+//                    .setSmallIcon(R.drawable.ic_home)
+//                    .setContentTitle(notification.get("title"))
+//                    .setContentText(notification.get("body"))
+//                    .setAutoCancel(true)
+//                    .setSound(ringtoneuri)
+//                    .setContentIntent(pendingIntent)
+//                    .setStyle(new NotificationCompat.BigTextStyle().bigText(notification.get("body")));
+
         int requestID = (int) System.currentTimeMillis();
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String ringtonePreference = sharedPrefs.getString("notifications_new_message_ringtone", "DEFAULT_SOUND");
         Uri ringtoneuri = Uri.parse(ringtonePreference);
+//        Log.d("test123", "LOG 1: vest je primljena");
         boolean vibrate = sharedPrefs.getBoolean("notifications_new_message_vibrate", true);
+        Intent intent = new Intent(this, NotificationClickReceiver.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("vestExtra", novaVest);
+        intent.putExtra("urlExtra", newUrl);
 
-        //Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(notification.get("url")));
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, requestID , intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_DEFAULT);
 
-        Intent[] intents = new Intent[2];
-        intents[0] = new Intent(this, NotificationClickReceiver.class);
-        Log.d("test123", "LOG 1: vest je primljena");
-        intents[0].putExtra("vestExtra", notification.get("body"));
-        intents[0].setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intents[1] = new Intent(Intent.ACTION_VIEW, Uri.parse(notification.get("url")));
-        intents[1].setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-        PendingIntent pendingIntent = PendingIntent.getActivities(this, requestID , intents, PendingIntent.FLAG_UPDATE_CURRENT);
+            // Configure the notification channel.
+            notificationChannel.setDescription("Defaultni channel");
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.BLUE);
+            notificationChannel.enableVibration(vibrate);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
 
         NotificationCompat.Builder notificationBuilder =
 
-            new NotificationCompat.Builder(this)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_logo_new))
-                    .setSmallIcon(R.drawable.ic_home)
-                    .setContentTitle(notification.get("title"))
-                    .setContentText(notification.get("body"))
-                    .setAutoCancel(true)
-                    .setSound(ringtoneuri)
-                    .setContentIntent(pendingIntent)
-                    .setStyle(new NotificationCompat.BigTextStyle().bigText(notification.get("body")));
+                new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_logo_new))
+                        .setSmallIcon(R.drawable.ic_home_dark)
+                        .setContentTitle(newTitle)
+                        .setContentText(novaVest)
+                        .setAutoCancel(true)
+                        .setSound(ringtoneuri)
+                        .setContentIntent(pendingIntent)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(novaVest));
 
-        NotificationManager notificationManager =
-        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+        ////////
         if (vibrate){
             notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
         }
 
         notificationBuilder.setLights(Color.BLUE, 1000, 300);
 
-        notificationManager.notify(requestID, notificationBuilder.build());
+        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
 
 
     }

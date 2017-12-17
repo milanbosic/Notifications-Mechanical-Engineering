@@ -14,22 +14,52 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="4dp"
-        card_view:cardCornerRadius="0dp">
+        card_view:cardCornerRadius="2dp">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/textViewIstorijaTitle"
+            <RelativeLayout
+                android:id="@+id/relativeLayout1"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:textStyle="bold"
-                android:paddingLeft="8dp"
-                android:gravity="center_vertical"
-                 />
+                android:layout_height="50dp">
+                <TextView
+                    android:id="@+id/textViewIstorijaTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primaryText"
+                    android:textStyle="bold"
+                    android:paddingLeft="8dp"
+                    android:gravity="center_vertical"
+                    android:layout_centerVertical="true"
+                    />
+
+                <View
+                    android:id="@+id/lineView"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="48dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_below="@id/textViewIstorijaTitle"
+                    android:background="#403D484C" />
+                <View
+                    android:id="@+id/lineView1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="4.5dp"
+                    android:layout_marginRight="48dp"
+                    android:layout_below="@+id/textViewIstorijaTitle"
+                    android:background="#7A3D484C" />
+
+            </RelativeLayout>
+
+
             <TextView
                 android:id="@+id/textViewIstorijaData"
-                android:layout_below="@+id/textViewIstorijaTitle"
+                android:layout_below="@+id/relativeLayout1"
                 android:gravity="center_vertical"
+                android:textColor="@color/primaryText"
                 android:paddingLeft="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="50dp" />

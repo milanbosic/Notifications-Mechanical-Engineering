@@ -54,20 +54,22 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private ArrayList<Boolean> masSelected;
     private ArrayList<Boolean> katedreSelected;
 
-    private Boolean isChildSelected;
-    private Boolean selectionTrueOrFalse;
-//    private ArrayList<Boolean> ostaloSelected;
-
-//    private ArrayList<Boolean> ostaloSelected;
-
     private ArrayList<Boolean> checkedArray;
 
     private ProgressBar mProgressBar;
-    private SearchView mSearchView;
     private ExpandableListView mExpandableListView;
 
     private GroupViewHolder groupViewHolder;
     private ChildViewHolder childViewHolder;
+
+    private RequestQueue requestQueue;
+
+    public void onStop(){
+        if (requestQueue != null){
+
+            requestQueue.cancelAll(FeedbackActivity.VolleyTag);
+        }
+    }
 
 
     public ExpandableListAdapter (Context context, List<String> listDataHeader, HashMap<String, List<String>> listHashMap, View mainView){
@@ -122,6 +124,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 //            for (int i = 0; i < 2; i++) ostaloSelected.add(false);
 //        }
     }
+
+
 
     @Override
     public int getGroupCount() {
@@ -418,13 +422,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 }
             };
 
-            RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+            requestQueue = Volley.newRequestQueue(mContext);
             CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, responseListen, errorListen);
+            jsObjRequest.setTag(FeedbackActivity.VolleyTag);
 
             requestQueue.add(jsObjRequest);
         }
 
     }
+
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {

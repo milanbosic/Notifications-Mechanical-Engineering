@@ -110,24 +110,37 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
 
     public void addData(String vest){
         mDataSet.add(0, vest);
-        if (mDataSet.size() > 15){
-            mDataSet.remove(15);
+        if (mDataSet.size() > 30){
+            for (int i = 30; i < mDataSet.size(); i++){
+                mDataSet.remove(i);
+
+            }
+            tinyDB.putListString("vesti", mDataSet);
+
         }
 //        tinyDB.putListString("vesti", mDataSet);
     }
 
     public void addTitle(String title){
         mTitlesSet.add(0, title);
-        if (mTitlesSet.size() > 15){
-            mTitlesSet.remove(15);
+        if (mTitlesSet.size() > 30){
+            for (int i = 30; i < mTitlesSet.size(); i++){
+                mTitlesSet.remove(i);
+            }
+            tinyDB.putListString("titles", mTitlesSet);
+
         }
 //        tinyDB.putListString("titles", mTitlesSet);
     }
 
     public void addUrl(String url){
         mUrlsSet.add(0, url);
-        if (mUrlsSet.size() > 15){
-            mUrlsSet.remove(15);
+
+        if (mUrlsSet.size() > 30){
+            for (int i = 30; i < mUrlsSet.size(); i++){
+                mUrlsSet.remove(i);
+            }
+            tinyDB.putListString("urls", mUrlsSet);
         }
 //        tinyDB.putListString("urls", mUrlsSet);
     }
@@ -147,6 +160,20 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
         tinyDB.putListString("urls", mUrlsSet);
         if (mTitlesSet.size() == 0){
 
+            textViewEmpty.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void removeWithoutChangingDatabaseAt(int position){
+
+        mDataSet.remove(position);
+        mTitlesSet.remove(position);
+        mUrlsSet.remove(position);
+
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, mDataSet.size());
+
+        if (mTitlesSet.size() == 0) {
             textViewEmpty.setVisibility(View.VISIBLE);
         }
     }

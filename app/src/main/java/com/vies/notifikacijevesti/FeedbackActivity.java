@@ -36,6 +36,8 @@ public class FeedbackActivity extends AppCompatActivity {
     public RatingBar ratingBar;
     private String[] items;
     private EditText editText;
+    private RequestQueue requestQueue;
+    public static final String VolleyTag = "volleyTag";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,14 +60,14 @@ public class FeedbackActivity extends AppCompatActivity {
                 }
             }
         });
-        items = new String[] {"Funkcionalnost", "Interfejs", "Performanse", "Drugo"};
+        items = new String[] {"Utisak", "Prijavi grešku", "Sugestije"};
         spinner.setItems(items);
 
         spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
 
             @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
 
-                if (position == 3){
+                if (position == 1 || position == 2){
                     ratingBar.setVisibility(View.GONE);
                 } else {
                     if (ratingBar.getVisibility() == View.GONE) ratingBar.setVisibility(View.VISIBLE);
@@ -89,8 +91,8 @@ public class FeedbackActivity extends AppCompatActivity {
 
                     params.put("category", items[spinner.getSelectedIndex()]);
 
-                    if (spinner.getSelectedIndex() == 3){
-                        params.put("rating", "drugo");
+                    if (spinner.getSelectedIndex() == 1 || spinner.getSelectedIndex() == 2){
+                        params.put("rating", "0");
                     } else {
                         params.put("rating", "" + ratingBar.getRating());
                     }
@@ -124,17 +126,26 @@ public class FeedbackActivity extends AppCompatActivity {
                         }
                     };
 
-                    RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                    requestQueue = Volley.newRequestQueue(getApplicationContext());
                     CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, responseListen, errorListen);
+                    jsObjRequest.setTag(VolleyTag);
 
                     requestQueue.add(jsObjRequest);
                 } else {
                     serverErrorDialog("Poruka mora sadržati maksimum 500 karaktera.", view);
                 }
-
-
             }
         });
+
+    }
+
+    protected void onStop() {
+
+        super.onStop();
+        if (requestQueue != null){
+
+            requestQueue.cancelAll(VolleyTag);
+        }
 
     }
 

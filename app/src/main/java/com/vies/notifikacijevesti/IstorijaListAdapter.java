@@ -91,8 +91,11 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
 
     public void addTitle(String title){
         mTitlesSet.add(0, title);
-        if (mTitlesSet.size() > 15){
-            mTitlesSet.remove(15);
+        if (mTitlesSet.size() > 30){
+            for (int i = 30; i < mTitlesSet.size(); i++){
+                mTitlesSet.remove(i);
+            }
+            tinyDB.putListString("istorijaTitles", mTitlesSet);
         }
 
         empty.setVisibility(View.GONE);
@@ -100,16 +103,23 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
 
     public void addData(String data){
         mDataSet.add(0, data);
-        if (mDataSet.size() > 15){
-            mDataSet.remove(15);
+        if (mDataSet.size() > 30){
+            for (int i = 30; i < mDataSet.size(); i++){
+                mDataSet.remove(i);
+            }
+            tinyDB.putListString("istorijaData", mDataSet);
         }
 //        tinyDB.putListString("istorijaData", mDataSet);
     }
 
     public void addUrl(String url){
         mUrlsSet.add(0, url);
-        if (mUrlsSet.size() > 15){
-            mUrlsSet.remove(15);
+        if (mUrlsSet.size() > 30){
+            for (int i = 30; i < mUrlsSet.size(); i++){
+                mUrlsSet.remove(i);
+            }
+            tinyDB.putListString("istorijaUrls", mUrlsSet);
+
         }
 //        tinyDB.putListString("istorijaUrls", mUrlsSet);
     }

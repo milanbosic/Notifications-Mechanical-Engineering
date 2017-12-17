@@ -45,6 +45,8 @@ public class Tab3Predmeti extends Fragment {
     private int lastExpandedPosition = -1;
     int counter = 0;
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -315,6 +317,10 @@ public class Tab3Predmeti extends Fragment {
         listHash.put(listDataHeader.get(2), kat);
 //        listHash.put(listDataHeader.get(3), ostalo);
 
+    }
+    public void onStop(){
+        super.onStop();
+        listAdapter.onStop();
     }
 
 //    @Override

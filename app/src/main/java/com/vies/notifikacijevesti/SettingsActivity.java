@@ -23,6 +23,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -201,33 +202,32 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         builder = new AlertDialog.Builder(getActivity());
                     }
                     builder.setMessage("Da li ste sigurni da želite da obrišete istoriju vesti?")
-                            .setPositiveButton("Ne", new DialogInterface.OnClickListener() {
+                            .setPositiveButton("Da", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    //code for what you want it to do
+                                TinyDB tinyDB = new TinyDB(getActivity());
 
+                                ArrayList<String> titleSet = tinyDB.getListString("istorijaTitles");
+                                ArrayList<String> dataSet = tinyDB.getListString("istorijaData");
+                                ArrayList<String> urlSet = tinyDB.getListString("istorijaUrls");
+
+                                titleSet.clear();
+                                dataSet.clear();
+                                urlSet.clear();
+
+                                tinyDB.putListString("istorijaTitles", titleSet);
+                                tinyDB.putListString("istorijaData", dataSet);
+                                tinyDB.putListString("istorijaUrls", urlSet);
+                                Intent intent = new Intent();
+                                intent.setAction("com.notifikacijevesti.refreshhistory");
+                                intent.putExtra("extraString", "deleteActivity");
+
+                                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
                                 }
                             })
-                            .setNegativeButton("Da", new DialogInterface.OnClickListener() {
+                            .setNegativeButton("Ne", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    TinyDB tinyDB = new TinyDB(getActivity());
 
-                                    ArrayList<String> titleSet = tinyDB.getListString("istorijaTitles");
-                                    ArrayList<String> dataSet = tinyDB.getListString("istorijaData");
-                                    ArrayList<String> urlSet = tinyDB.getListString("istorijaUrls");
-
-                                    titleSet.clear();
-                                    dataSet.clear();
-                                    urlSet.clear();
-
-                                    tinyDB.putListString("istorijaTitles", titleSet);
-                                    tinyDB.putListString("istorijaData", dataSet);
-                                    tinyDB.putListString("istorijaUrls", urlSet);
-                                    Intent intent = new Intent();
-                                    intent.setAction("com.notifikacijevesti.refreshhistory");
-                                    intent.putExtra("extraString", "deleteActivity");
-
-                                    LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
                                 }
                             })
                             .setIcon(R.drawable.ic_alert)
@@ -273,6 +273,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
+
         }
 
 //        @Override

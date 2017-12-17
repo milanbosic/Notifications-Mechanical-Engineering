@@ -2,7 +2,11 @@ package com.vies.notifikacijevesti;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +21,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -28,6 +33,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -68,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
     ActionBarDrawerToggle mDrawerToggle;                  // Declaring Action Bar Drawer Toggle
 
+    FloatingActionButton fab;
+
     Button saveButton1;
 
     @Override
@@ -75,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         TinyDB tinyDB = new TinyDB(this);
-        Log.d("test123", "db: " + tinyDB.getString("closedString"));
 
         setContentView(R.layout.activity_main);
 
@@ -130,12 +137,67 @@ public class MainActivity extends AppCompatActivity {
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
 
+        fab = findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction("com.notifikacijevesti.refresh");
+                intent.putExtra("fromMain", true);
+                LocalBroadcastManager.getInstance(v.getContext()).sendBroadcast(intent);
+                Snackbar snackbar = Snackbar.make(v, "Sve vesti su obrisane.", Snackbar.LENGTH_SHORT);
+                View view = snackbar.getView();
+                TextView tv = view.findViewById(android.support.design.R.id.snackbar_text);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+                    tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                else
+                    tv.setGravity(Gravity.CENTER_HORIZONTAL);
+                snackbar.show();
+            }
+        });
+
         if (!tinyDB.contains("firstTime")){
             mViewPager.setCurrentItem(2);
+            if (fab != null) {
+                fab.hide();
+            }
 
         } else{
             mViewPager.setCurrentItem(1);
         }
+
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        fab.hide();
+                        break;
+                    case 1:
+                        fab.show();
+                        break;
+                    case 2:
+                        fab.hide();
+                        break;
+                    default:
+                        fab.hide();
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         final GestureDetector mGestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
 
@@ -224,8 +286,6 @@ public class MainActivity extends AppCompatActivity {
      * one of the sections/tabs/pages.
      */
 
-
-
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -237,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
             switch(position){
                 case 0:
                     Tab1Istorija tab1 = new Tab1Istorija();
+
                     return tab1;
                 case 1:
                     Tab2Vesti tab2 = new Tab2Vesti();

@@ -20,6 +20,11 @@
         android:paddingLeft="12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="12dp" />
+        android:button="@null"
+        android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+        android:paddingStart="12dp"/>
+
+
 
 </LinearLayout>

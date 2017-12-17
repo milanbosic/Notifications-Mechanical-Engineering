@@ -21,19 +21,19 @@
         android:layout_marginTop="4dp"
         android:layoutAnimation="@anim/layout_animation_slide_from_bottom"/>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fab"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
 
-        android:layout_gravity="end|bottom"
+        <!--android:scaleType="center"-->
+        <!--android:layout_gravity="bottom|right"-->
 
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="70dp"
-        android:scaleType="center"
-        app:fabSize="normal"
-        app:srcCompat="@android:drawable/ic_menu_delete"
-        android:layout_marginEnd="20dp" />
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:layout_marginBottom="70dp"-->
+        <!--app:fabSize="normal"-->
+        <!--app:srcCompat="@drawable/ic_delete1"-->
+        <!--android:layout_marginEnd="20dp" />-->
 
     <TextView
         android:id="@+id/emptyVesti"

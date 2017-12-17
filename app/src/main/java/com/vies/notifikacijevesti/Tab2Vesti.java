@@ -99,7 +99,7 @@ public class Tab2Vesti extends Fragment {
 //                ArrayList<String> listTitles = tinyDB.getListString("titles");
 //                ArrayList<String> listUrls = tinyDB.getListString("urls");
 //
-//                listTitles.add(0,"" + counter);
+//                listTitles.add(0,"TEST DSFSADFASDFASDFSDAFSDAFSDAFSDFSDF ASDFSDFSADF SDFASF");
 //                listData.add(0, "Термин поправног(писаног) делaаaa испита + Усмени фебруарски рок");
 //                listUrls.add(0, "http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
 //
@@ -111,7 +111,7 @@ public class Tab2Vesti extends Fragment {
 //                ArrayList<String> dataSet = tinyDB.getListString("istorijaData");
 //                ArrayList<String> urlSet = tinyDB.getListString("istorijaUrls");
 //
-//                titleSet.add(0, "" + counter);
+//                titleSet.add(0, "TEST DSFSADFASDFASDFSDAFSDAFSDAFSDFSDF ASDFSDFSADF SDFASF");
 //                dataSet.add(0, "Термин поправног(писаног) делaаaa испита + Усмени фебруарски рок");
 //                urlSet.add(0, "http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
 //
@@ -119,7 +119,7 @@ public class Tab2Vesti extends Fragment {
 //                tinyDB.putListString("istorijaData", dataSet);
 //                tinyDB.putListString("istorijaUrls", urlSet);
 //
-//                mAdapter.addTitle("" + counter);
+//                mAdapter.addTitle("TEST DSFSADFASDFASDFSDAFSDAFSDAFSDFSDF ASDFSDFSADF SDFASF");
 //                mAdapter.addData("Термин поправног(писаног) делаaaa испита + Усмени фебруарски рок");
 //                mAdapter.addUrl("http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
 //                counter++;
@@ -129,16 +129,16 @@ public class Tab2Vesti extends Fragment {
 //            }
 //        });
 
-        FloatingActionButton fab = rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Snackbar.make(view, "Sve vesti su obrisane.", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                mAdapter.clearAll();
-                Toast.makeText(getContext(),  "Sve vesti su obrisane.", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        FloatingActionButton fab = rootView.findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Snackbar.make(view, "Sve vesti su obrisane.", Snackbar.LENGTH_LONG)
+////                        .setAction("Action", null).show();
+//                mAdapter.clearAll();
+//                Toast.makeText(getContext(),  "Sve vesti su obrisane.", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         return rootView;
     }
@@ -149,12 +149,14 @@ public class Tab2Vesti extends Fragment {
         public void onReceive(Context context, Intent intent) {
 
             if (intent.getBooleanExtra("shouldDelete", false)){
-                String vest = intent.getStringExtra("vest");
-                Integer index = tinyDB.getListString("vesti").indexOf(vest);
-                Log.d("test123", "LOG 3: Index at Tab2Vesti " + index + "vest: " + vest);
-                if (index != -1) mAdapter.removeAt(index);
-                mAdapter.notifyDataSetChanged();
-            } else{
+                int index = intent.getIntExtra("index", -1);
+                Log.d("test123", "LOG 3: Index at Tab2Vesti " + index + "vest: ");
+                if (index != -1) mAdapter.removeWithoutChangingDatabaseAt(index);
+                //mAdapter.notifyDataSetChanged();
+            } else if(intent.getBooleanExtra("fromMain", false)){
+                mAdapter.clearAll();
+            }
+            else{
                 mAdapter.addData(MyFirebaseMessagingService.novaVest);
                 mAdapter.addTitle(MyFirebaseMessagingService.newTitle);
                 mAdapter.addUrl(MyFirebaseMessagingService.newUrl);
