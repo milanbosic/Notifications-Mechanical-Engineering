@@ -31,9 +31,9 @@
             android:text="@string/drawer_header_1"
             android:textColor="#ffffff"
             android:shadowColor="#000000"
-            android:shadowDx="2"
-            android:shadowDy="2"
-            android:shadowRadius="2"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="1"
             android:textSize="19sp"
             android:textStyle="bold" />
 
