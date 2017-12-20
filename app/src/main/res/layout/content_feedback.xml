@@ -29,26 +29,38 @@
         android:layout_marginTop="15dp"
         android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:id="@+id/textNaslov"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_below="@+id/ratingBar"
-        android:layout_marginTop="15dp"
-        android:gravity="center_vertical"
-        android:paddingLeft="10dp"
-        android:text="Poruka:"
-        android:textColor="@color/primaryText"
-        android:textSize="16sp" />
+    <!--<TextView-->
+        <!--android:id="@+id/textNaslov"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:layout_below="@+id/ratingBar"-->
+        <!--android:layout_marginTop="15dp"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:paddingLeft="10dp"-->
+        <!--android:text="Poruka:"-->
+        <!--android:textColor="@color/primaryText"-->
+        <!--android:textSize="16sp" />-->
 
-    <EditText
-        android:id="@+id/textPoruka"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout"
         android:gravity="top"
+        app:counterEnabled="true"
+        app:counterMaxLength="500"
         android:layout_width="match_parent"
-        android:layout_height="230dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/textNaslov"
-        android:layout_marginTop="16dp" />
+        android:layout_below="@+id/ratingBar"
+        android:layout_marginTop="16dp">
+
+            <EditText
+                android:id="@+id/textPoruka"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Poruka"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+
 
 </RelativeLayout>

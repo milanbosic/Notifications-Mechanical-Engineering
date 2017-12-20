@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Notifikacije Mašinski</string>
+    <string name="app_name">Notifikacije Mašinac</string>
     <string name="action_settings">Podešavanja</string>
     <string name="openDrawer">Open Drawer </string>
     <string name="closeDrawer">Close Drawer </string>
@@ -7,7 +7,8 @@
     <string name="element_text">Element</string>
     <string name="grid_layout_manager">Grid Layout Manager</string>
     <string name="linear_layout_manager">Linear Layout Manager</string>
-    <string name="empty_vesti">Nemate novih vesti.</string>
+    <string name="empty_istorija">Nemate novih vesti.</string>
+    <string name="empty_vesti">Nemate nepročitanih vesti.</string>
     <string name="title_activity_settings">Podešavanja</string>
 
     <string name="title_activity_feedback">Feedback</string>

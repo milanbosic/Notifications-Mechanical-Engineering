@@ -307,12 +307,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
             groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(null);
 
-            for ( int i = 0; i < mSelectedSubjects.size(); i++){
-                if (i == 0){
-                    Log.d("selectedsubjects", "POCETAK");
-                }
-                Log.d("selectedsubjects", mSelectedSubjects.get(i));
-            }
+//            for ( int i = 0; i < mSelectedSubjects.size(); i++){
+//                if (i == 0){
+//                    Log.d("selectedsubjects", "POCETAK");
+//                }
+//                Log.d("selectedsubjects", mSelectedSubjects.get(i));
+//            }
             notifyDataSetChanged();
 
 //                mExpandableListView.collapseGroup(groupPosition);
@@ -342,7 +342,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ArrayList<String> databaseList = tinyDB.getListString("selectedSubjects");
         if (mSelectedSubjects.containsAll(databaseList) && databaseList.containsAll(mSelectedSubjects)){
             //Toast.makeText(mContext, "Lista predmeta je ista", Toast.LENGTH_SHORT).show();
-            Snackbar snackbar = Snackbar.make(mView, "Ne možete sačuvati iste predmete.", Snackbar.LENGTH_SHORT);
+            Snackbar snackbar = Snackbar.make(mView, "Već ste sačuvali ovu listu predmeta.", Snackbar.LENGTH_SHORT);
             View view = snackbar.getView();
             TextView tv = view.findViewById(android.support.design.R.id.snackbar_text);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -351,7 +351,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 tv.setGravity(Gravity.CENTER_HORIZONTAL);
             snackbar.show();
         } else{
-            String url ="http://165.227.154.9:8082/api/";
+            String url ="http://165.227.154.9/api/";
 
             HashMap<String, String> params = new HashMap<String, String>();
 
@@ -368,7 +368,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             Response.ErrorListener errorListen = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    VolleyLog.v("responseJson: ", error);
+                    //VolleyLog.v("responseJson: ", error);
                     serverErrorDialog();
                     mProgressBar.setVisibility(View.INVISIBLE);
                     mExpandableListView.setVisibility(View.VISIBLE);
@@ -380,7 +380,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 @Override
                 public void onResponse(JSONObject response) {
                 try{
-                    Log.d("Response: ", response.getString("message"));
+                    //Log.d("Response: ", response.getString("message"));
                     if (response.getString("message").contains("Success")){
 
                         if (mSelectedSubjects != null) {
@@ -440,7 +440,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public void filterData(String query){
 
         query = query.toLowerCase();
-        Log.d("MyListAdapter", String.valueOf(listDataHeader.size()));
+//        Log.d("MyListAdapter", String.valueOf(listDataHeader.size()));
 
     }
 
@@ -541,15 +541,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 //                        }
                 }
             }
-            if (mSelectedSubjects.size()==0){
-                Log.d("selectedsubjects", "PRAZNO");
-            }
-            for ( int i = 0; i < mSelectedSubjects.size(); i++){
-                if (i == 0){
-                    Log.d("selectedsubjects", "POCETAK");
-                }
-                Log.d("selectedsubjects", mSelectedSubjects.get(i));
-            }
+//            if (mSelectedSubjects.size()==0){
+//                Log.d("selectedsubjects", "PRAZNO");
+//            }
+//            for ( int i = 0; i < mSelectedSubjects.size(); i++){
+//                if (i == 0){
+//                    Log.d("selectedsubjects", "POCETAK");
+//                }
+//                Log.d("selectedsubjects", mSelectedSubjects.get(i));
+//            }
 
             notifyDataSetChanged();
             if (isExpanded){

@@ -219,7 +219,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         notificationBuilder.setLights(Color.BLUE, 1000, 300);
 
-        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        notificationManager.notify(requestID, notificationBuilder.build());
 
 
     }
@@ -229,7 +229,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Context context = getApplicationContext();
 
         final TinyDB tinyDB = new TinyDB(context);
-        String url ="http://91.187.151.172:3000/api/onrefresh/";
+        String url = "http://165.227.154.9/api/onrefresh";
 
         HashMap<String, String> params = new HashMap<String, String>();
 
@@ -239,7 +239,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Response.ErrorListener errorListen = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.v("responseJson: ", error);
+//                VolleyLog.v("responseJson: ", error);
                 //Toast.makeText(getApplicationContext(), "Дошло је до грешке.", Toast.LENGTH_SHORT).show();
             }
         };
@@ -248,7 +248,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             @Override
             public void onResponse(JSONObject response) {
                 try{
-                    Log.d("Response: ", response.getString("message"));
+//                    Log.d("Response: ", response.getString("message"));
                     if (response.getString("message").contains("Success")){
                         tinyDB.putString("token", FirebaseInstanceId.getInstance().getToken());
                     } else{

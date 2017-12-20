@@ -150,7 +150,7 @@ public class Tab2Vesti extends Fragment {
 
             if (intent.getBooleanExtra("shouldDelete", false)){
                 int index = intent.getIntExtra("index", -1);
-                Log.d("test123", "LOG 3: Index at Tab2Vesti " + index + "vest: ");
+//                Log.d("test123", "LOG 3: Index at Tab2Vesti " + index + "vest: ");
                 if (index != -1) mAdapter.removeWithoutChangingDatabaseAt(index);
                 //mAdapter.notifyDataSetChanged();
             } else if(intent.getBooleanExtra("fromMain", false)){

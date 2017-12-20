@@ -161,14 +161,15 @@ public class Tab3Predmeti extends Fragment {
         List<String> oas = new ArrayList<>();
         oas.add("Biomehanika lokomotornog sistema (0800)");
         oas.add("Biofizika (0823)");
-        oas.add("Goriva i industrijska voda (0888)");
-        oas.add("Gorivi tehnički gasovi u procesima zavarivanja (0891)");
         oas.add("Dinamika vozila (0871)");
         oas.add("Elektronika (1071)");
         oas.add("Elektrotehnika (1070)");
         oas.add("Engleski jezik 1 (0506)");
         oas.add("Engleski jezik 2 (0489)");
         oas.add("Estetski dizajn (0988)");
+        oas.add("Fizika i merenja (0025)");
+        oas.add("Goriva i industrijska voda (0888)");
+        oas.add("Gorivi tehnički gasovi u procesima zavarivanja (0891)");
         oas.add("Inženjerska grafika (0572)");
         oas.add("Kompjuterska grafika (0663)");
         oas.add("Kompjutersko modeliranje i animacija (0591)");
@@ -232,7 +233,7 @@ public class Tab3Predmeti extends Fragment {
         oas.add("Uvod u energetiku (0406)");
         oas.add("Uvod u industrijsko inženjerstvo  (0209)");
         oas.add("Uvod u sisteme naoružanja (0210)");
-        oas.add("Fizika i merenja (0025)");
+
 
         List<String> mas = new ArrayList<>();
         mas.add("Aerodinamika velikih brzina (0950)");
@@ -241,11 +242,11 @@ public class Tab3Predmeti extends Fragment {
         mas.add("Automatizacija proizvodnje (0785)");
         mas.add("Biogoriva u procesima sagorevanja (0894)");
         mas.add("Biomehanika tkiva i organa (0559)");
-        mas.add("Vazduhoplovni propulzori (0951)");
         mas.add("Eksperimenti i simulacije (0716)");
         mas.add("Električne mašine (0401)");
         mas.add("Elektronika (1073)");
         mas.add("Efektivnost sistema (0711)");
+        mas.add("Hibridni tehnički sistemi (0966)");
         mas.add("Industrijski roboti (0290)");
         mas.add("Inovativni dizajn tehničkih sistema (0964)");
         mas.add("Informacione tehnologije u medicini (0393)");
@@ -292,11 +293,12 @@ public class Tab3Predmeti extends Fragment {
         mas.add("Tehnika merenja i senzori (0647)");
         mas.add("Tehnika merenja i senzori (0926)");
         mas.add("Toplotne pumpe (1050)");
-        mas.add("Hibridni tehnički sistemi (0966)");
-
+        mas.add("Vazduhoplovni propulzori (0951)");
 
         List<String> kat = new ArrayList<>();
         kat.add("katedra za industrijsko inženjerstvo");
+        kat.add("katedra za fiziku i elektrotehniku");
+        kat.add("katedra za hidraulične mašine i energetske sisteme");
         kat.add("katedra za matematiku");
         kat.add("katedra za mehaniku");
         kat.add("katedra za motorna vozila");
@@ -304,8 +306,6 @@ public class Tab3Predmeti extends Fragment {
         kat.add("katedra za termoenergetiku");
         kat.add("katedra za termomehaniku");
         kat.add("katedra za tehnologiju materijala");
-        kat.add("katedra za fiziku i elektrotehniku");
-        kat.add("katedra za hidraulične mašine i energetske sisteme");
 
 
 //        List<String> ostalo = new ArrayList<>();

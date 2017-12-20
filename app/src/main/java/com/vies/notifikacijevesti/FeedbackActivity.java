@@ -83,7 +83,7 @@ public class FeedbackActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
 
                 if (editText.getText().length() <= 500){
-                    String url ="http://165.227.154.9:8082/api/feedback";
+                    String url ="http://165.227.154.9/api/feedback";
 
                     HashMap<String, String> params = new HashMap<String, String>();
 
@@ -102,7 +102,7 @@ public class FeedbackActivity extends AppCompatActivity {
                     Response.ErrorListener errorListen = new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            VolleyLog.v("responseJson: ", error);
+//                            VolleyLog.v("responseJson: ", error);
                                 serverErrorDialog("Došlo je do greške u povezivanju sa serverom. Molimo pokušajte ponovo", view);
 
                         }
@@ -112,10 +112,12 @@ public class FeedbackActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             try{
-                                Log.d("Response: ", response.getString("message"));
+//                                Log.d("Response: ", response.getString("message"));
                                 if (response.getString("message").contains("Success")){
 
                                     Snackbar.make(view, "Uspešno sačuvano", Snackbar.LENGTH_LONG).show();
+                                } else if(response.getString("message").contains("ticket")){
+                                    serverErrorDialog("Vaša poruka je prihvaćena, molimo sačekajte da se obradi.", view);
                                 } else{
                                     serverErrorDialog("Došlo je do greške u povezivanju sa serverom. Molimo pokušajte ponovo.", view);
                                 }
