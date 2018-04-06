@@ -17,7 +17,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Tab that shows a history of all data
+ * Tab that shows a history of all received data
  */
 
 public class Tab1Istorija extends Fragment {

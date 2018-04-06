@@ -173,7 +173,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
-    /**
+    /*
      * Get the group view, set text based on the position
      * and set group checkbox state to checked if all children are checked
      */
@@ -226,7 +226,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-    /**
+    /*
      * Get child views, set text and add or remove checked states from lists
      */
     @Override
@@ -314,14 +314,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-    /**
-     * On Save button press
-     * Send an HTTP request with a JSON string with a Firebase token and a list of selected subjects to the server
-     * if it succeeds save the list to local storage
-     * otherwise display an Alert Dialog indicating an error
-     * disable clickable objects  and enable progress bar until the action is completed
-     */
 
+
+    // Toggle the visibility of the progress bar and other views
     private void ToggleProgressBar(boolean enableOrDisable) {
         if (enableOrDisable) {
             mProgressBar.setVisibility(View.VISIBLE);
@@ -332,6 +327,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         }
     }
 
+    /**
+     * On Save button press
+     * Send an HTTP request with a JSON string with a Firebase token and a list of selected subjects to the server
+     * if it succeeds save the list to local storage
+     * otherwise display an Alert Dialog indicating an error
+     * disable clickable objects  and enable progress bar until the action is completed
+     */
     public void onButtonPress() {
 
         ArrayList<String> databaseList = tinyDB.getListString("selectedSubjects");
