@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-//import com.google.gson.Gson;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -41,6 +40,9 @@ import android.text.TextUtils;
 import android.util.Log;
 
 
+/**
+ * Helper class for convenient access to local storage
+ */
 public class TinyDB {
 
     private SharedPreferences preferences;

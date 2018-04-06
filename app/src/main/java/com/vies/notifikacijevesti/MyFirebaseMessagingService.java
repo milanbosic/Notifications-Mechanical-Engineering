@@ -9,19 +9,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -39,64 +31,62 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-
-import static android.media.RingtoneManager.getDefaultUri;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
-
-    private static final String TAG = "MyFirebaseMsgService";
 
     public static String novaVest;
     public static String newTitle;
     public static String newUrl;
 
-    private static final int NOTIFICATION_ID = 1;
     private static final String NOTIFICATION_CHANNEL_ID = "my_notification_channel";
+    public static final String UPDATE_ISTORIJA = "com.notifikacijevesti.updateistorija";
+    public static final String UPDATE_VESTI = "com.notifikacijevesti.updatevesti";
 
     private TinyDB tinyDB;
 
     /**
      * Called when message is received.
-     *
+     * <p>
      * param remoteMessage Object representing the message received from Firebase Cloud Messaging.
      */
-    // [START receive_message]
 
-    public void onCreate(){
+    public void onCreate() {
         tinyDB = new TinyDB(this.getApplicationContext());
+        // Get the Firebase token and save it in local storage
         tinyDB.putString("token", FirebaseInstanceId.getInstance().getToken());
     }
 
-
+    /* Called when a Firebase message is received */
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-
+        // Load saved notification preferences (sound, vibration, etc.)
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         boolean notificationPref = sharedPref.getBoolean("notifications_new_message", true);
 
+        // Get message data
         Map<String, String> data = remoteMessage.getData();
 
+        // Separate data from the received JSON string
         novaVest = data.get("body");
         newTitle = data.get("title");
         newUrl = data.get("url");
 
-//        novaVest = "test1vest";
-//        newTitle = "test1naslov";
-//        newUrl = "http://www.leetcode.com";
-
+        // Get the lists with data from local storage
         ArrayList<String> listData = tinyDB.getListString("vesti");
         ArrayList<String> listTitles = tinyDB.getListString("titles");
         ArrayList<String> listUrls = tinyDB.getListString("urls");
 
+        // Add new data
         listData.add(0, novaVest);
-        listTitles.add(0,newTitle);
+        listTitles.add(0, newTitle);
         listUrls.add(0, newUrl);
 
+        // Save modified lists to local storage
         tinyDB.putListString("vesti", listData);
         tinyDB.putListString("titles", listTitles);
         tinyDB.putListString("urls", listUrls);
 
+        // Repeat for history data
         ArrayList<String> titleSet = tinyDB.getListString("istorijaTitles");
         ArrayList<String> dataSet = tinyDB.getListString("istorijaData");
         ArrayList<String> urlSet = tinyDB.getListString("istorijaUrls");
@@ -118,82 +108,44 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
+    /**
+     * Broadcast intents to update data in fragments
+     */
     public void broadcastIntent() {
         Intent intent = new Intent();
-        intent.setAction("com.notifikacijevesti.refresh");
-        // We should use LocalBroadcastManager when we want INTRA app
-        // communication
+        intent.setAction(UPDATE_ISTORIJA);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
 
         Intent intent1 = new Intent();
-        intent1.setAction("com.notifikacijevesti.refreshhistory");
+        intent1.setAction(UPDATE_VESTI);
         intent1.putExtra("extraString", "firebase");
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent1);
 
     }
 
+    // Send the notification to the user
     private void sendNotification(Map<String, String> notification) {
-//        int requestID = (int) System.currentTimeMillis();
-//
-//        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-//        String ringtonePreference = sharedPrefs.getString("notifications_new_message_ringtone", "DEFAULT_SOUND");
-//        Uri ringtoneuri = Uri.parse(ringtonePreference);
-//        boolean vibrate = sharedPrefs.getBoolean("notifications_new_message_vibrate", true);
-//
-//        Intent[] intents = new Intent[2];
-//        intents[0] = new Intent(this, NotificationClickReceiver.class);
-//        Log.d("test123", "LOG 1: vest je primljena");
-//        intents[0].putExtra("vestExtra", notification.get("body"));
-//        intents[0].setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        intents[1] = new Intent(Intent.ACTION_VIEW, Uri.parse(notification.get("url")));
-//        intents[1].setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//
-//        PendingIntent pendingIntent = PendingIntent.getActivities(this, requestID , intents, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-//
-//            // Configure the notification channel.
-//            notificationChannel.setDescription("Defaultni channel");
-//            notificationChannel.enableLights(true);
-//            notificationChannel.setLightColor(Color.BLUE);
-//            notificationChannel.enableVibration(vibrate);
-//            notificationManager.createNotificationChannel(notificationChannel);
-//        }
-//
-//        NotificationCompat.Builder notificationBuilder =
-//
-//            new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-//                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_logo_new))
-//                    .setSmallIcon(R.drawable.ic_home)
-//                    .setContentTitle(notification.get("title"))
-//                    .setContentText(notification.get("body"))
-//                    .setAutoCancel(true)
-//                    .setSound(ringtoneuri)
-//                    .setContentIntent(pendingIntent)
-//                    .setStyle(new NotificationCompat.BigTextStyle().bigText(notification.get("body")));
 
+        // A unique ID is needed for every notification, curent system time can be used
         int requestID = (int) System.currentTimeMillis();
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String ringtonePreference = sharedPrefs.getString("notifications_new_message_ringtone", "DEFAULT_SOUND");
         Uri ringtoneuri = Uri.parse(ringtonePreference);
-//        Log.d("test123", "LOG 1: vest je primljena");
         boolean vibrate = sharedPrefs.getBoolean("notifications_new_message_vibrate", true);
         Intent intent = new Intent(this, NotificationClickReceiver.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("vestExtra", novaVest);
         intent.putExtra("urlExtra", newUrl);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, requestID , intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, requestID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_DEFAULT);
 
             // Configure the notification channel.
-            notificationChannel.setDescription("Defaultni channel");
+            notificationChannel.setDescription("Default channel");
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.BLUE);
             notificationChannel.enableVibration(vibrate);
@@ -212,8 +164,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         .setContentIntent(pendingIntent)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(novaVest));
 
-        ////////
-        if (vibrate){
+        if (vibrate) {
             notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
         }
 
@@ -224,7 +175,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
-    public void onTokenRefresh(){
+    /* If the token changes for some reason
+     * send the new token to server */
+    public void onTokenRefresh() {
 
         Context context = getApplicationContext();
 
@@ -233,28 +186,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         HashMap<String, String> params = new HashMap<String, String>();
 
-        params.put ("oldtoken", tinyDB.getString("token"));
+        params.put("oldtoken", tinyDB.getString("token"));
         params.put("token", FirebaseInstanceId.getInstance().getToken());
 
         Response.ErrorListener errorListen = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-//                VolleyLog.v("responseJson: ", error);
-                //Toast.makeText(getApplicationContext(), "Дошло је до грешке.", Toast.LENGTH_SHORT).show();
+                VolleyLog.v("responseJson: ", error);
             }
         };
 
         Response.Listener<JSONObject> responseListen = new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                try{
-//                    Log.d("Response: ", response.getString("message"));
-                    if (response.getString("message").contains("Success")){
+                try {
+                    if (response.getString("message").contains("Success")) {
                         tinyDB.putString("token", FirebaseInstanceId.getInstance().getToken());
-                    } else{
-
                     }
-                }catch (JSONException e){
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }

@@ -1,24 +1,12 @@
 package com.vies.notifikacijevesti;
 
-import android.graphics.Color;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.RelativeLayout;
-import android.widget.SearchView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +18,8 @@ import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 
 /**
- * Created by milan on 10.10.2017..
+ * Tab that shows a list of all eligible subjects to which you can subscribe/unsubscribe
+ * and receive relevant notifications
  */
 
 public class Tab3Predmeti extends Fragment {
@@ -39,32 +28,25 @@ public class Tab3Predmeti extends Fragment {
     private ExpandableListAdapter listAdapter;
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listHash;
-    //private List<String> selectedSubjects;
-    private Button savebutton;
-    private SearchView search;
     private int lastExpandedPosition = -1;
     int counter = 0;
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.tab3predmeti, container, false);
-        savebutton = rootView.findViewById(R.id.saveButton);
+        // Save button for sending an HTTP request and saving the list of subscriptions
+        Button savebutton = rootView.findViewById(R.id.saveButton);
 
-//        SearchManager searchManager = (SearchManager) getActivity().getSystemService(rootView.getContext().SEARCH_SERVICE);
-//        search = (SearchView) rootView.findViewById(R.id.search);
-//        search.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-//        search.setIconifiedByDefault(false);
-//        search.setOnQueryTextListener(this);
-//        search.setOnCloseListener(this);
+        listView = rootView.findViewById(R.id.lvExp);
 
-        listView = (ExpandableListView) rootView.findViewById(R.id.lvExp);
         initData();
+
         listAdapter = new ExpandableListAdapter(this.getContext(), this.listDataHeader, listHash, rootView);
         listView.setAdapter(listAdapter);
+
         final TinyDB tinyDB = new TinyDB(this.getContext());
+
         savebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,36 +54,41 @@ public class Tab3Predmeti extends Fragment {
             }
         });
 
+        // Set a GroupExpandListener in order to collapse other groups on click
         listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                if (lastExpandedPosition != -1
-                        && groupPosition != lastExpandedPosition) {
+                if (lastExpandedPosition != -1 && groupPosition != lastExpandedPosition) {
                     listView.collapseGroup(lastExpandedPosition);
                 }
                 lastExpandedPosition = groupPosition;
             }
         });
+
+        // Check if an app has been started once, if not show the tutorial sequence
         if (!tinyDB.contains("firstTime")){
             listView.expandGroup(0);
             View view = getActivity().findViewById(R.id.tabs);
 
-            ShowcaseConfig config = new ShowcaseConfig();
-            config.setDelay(500);
-
+            // Tutorial sequence to introduce the user
             MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity());
 
             sequence.setOnItemDismissedListener(new MaterialShowcaseSequence.OnSequenceItemDismissedListener() {
                 @Override
                 public void onDismiss(MaterialShowcaseView materialShowcaseView, int i) {
 
+                    // If sequence counter has reached the third slide, update local storage
                     if (counter == 2){
                         tinyDB.putBoolean("firstTime", true);
                     }
                     counter++;
                 }
             });
+
+            ShowcaseConfig config = new ShowcaseConfig();
+            config.setDelay(500);
+
             sequence.setConfig(config);
 
             sequence.addSequenceItem(
@@ -128,35 +115,19 @@ public class Tab3Predmeti extends Fragment {
             );
 
             sequence.start();
-//                    new MaterialShowcaseView.Builder(getActivity())
-//                            .setTarget(listView)
-//                            .setDismissText("O")
-//                            .setContentText("This is some amazing feature you should know about")
-//                            .setDelay(300)
-//                            .show();
         }
-
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-
-
-            }
-        });
 
         return rootView;
     }
 
+    // Initialize expandable list data
     private void initData(){
         listDataHeader = new ArrayList<>();
         listHash = new HashMap<>();
-        //selectedSubjects = new ArrayList<>();
 
         listDataHeader.add("Osnovne Akademske Studije");
         listDataHeader.add("Master Akademske Studije");
         listDataHeader.add("Katedre");
-//        listDataHeader.add("Ostalo");
 
         List<String> oas = new ArrayList<>();
         oas.add("Biomehanika lokomotornog sistema (0800)");
@@ -308,41 +279,18 @@ public class Tab3Predmeti extends Fragment {
         kat.add("katedra za tehnologiju materijala");
 
 
-//        List<String> ostalo = new ArrayList<>();
-//        ostalo.add("Predmet 1");
-//        ostalo.add("Predmet 2");
-
         listHash.put(listDataHeader.get(0), oas);
         listHash.put(listDataHeader.get(1), mas);
         listHash.put(listDataHeader.get(2), kat);
-//        listHash.put(listDataHeader.get(3), ostalo);
 
     }
+
+    /**
+     * Call adapter's onStop method to cancel any pending requests
+     */
     public void onStop(){
         super.onStop();
         listAdapter.onStop();
     }
-
-//    @Override
-//    public boolean onClose() {
-//        listAdapter.filterData("");
-//        expandAll();
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean onQueryTextChange(String query) {
-//        listAdapter.filterData(query);
-//        expandAll();
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean onQueryTextSubmit(String query) {
-//        listAdapter.filterData(query);
-//        expandAll();
-//        return false;
-//    }
-
 
 }

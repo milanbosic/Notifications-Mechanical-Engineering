@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by milan on 27-Oct-17.
+ * Provides views for the RecyclerView in Tab1Istorija
  */
 
 public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapter.ViewHolder> {
@@ -23,60 +21,66 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
     private ArrayList<String> mTitlesSet;
     private ArrayList<String> mUrlsSet;
     private Context mContext;
-    private View rootView;
     private TinyDB tinyDB;
-    TextView empty;
+    private TextView empty;
 
+    /**
+     * Provide a reference to the type of views that are used (custom ViewHolder)
+     */
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView mTitleText;
+        TextView mDataText;
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView mTitleText;
-        public TextView mDataText;
-        public ViewHolder (View v){
+        ViewHolder(View v) {
             super(v);
+            // initialize two views for title and data for each card in the Recycler View
             mTitleText = v.findViewById(R.id.textViewIstorijaTitle);
             mDataText = v.findViewById(R.id.textViewIstorijaData);
+            // Set on click listener for the views in order to open a URL on click
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (getAdapterPosition() != -1){
-
+                    if (getAdapterPosition() != -1) {
+                        /* open the url from the list since adapter position coresponds to the data set */
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrlsSet.get(getAdapterPosition())));
                         mContext.startActivity(browserIntent);
-                        //removeAt(getAdapterPosition());
                     }
                 }
             });
         }
 
-        public TextView getTextViewTitle() { return mTitleText; }
+        public TextView getTextViewTitle() {
+            return mTitleText;
+        }
 
-        public TextView getTextViewData(){ return  mDataText; }
+        public TextView getTextViewData() {
+            return mDataText;
+        }
     }
 
-    public IstorijaListAdapter( ArrayList<String> myTitlesSet, ArrayList<String> myDataSet, ArrayList<String> myUrlsSet, Context context, View myRootView){
+    IstorijaListAdapter(ArrayList<String> myTitlesSet, ArrayList<String> myDataSet, ArrayList<String> myUrlsSet, Context context, View myRootView) {
         mTitlesSet = myTitlesSet;
         mDataSet = myDataSet;
         mUrlsSet = myUrlsSet;
         mContext = context;
-        rootView = myRootView;
         tinyDB = new TinyDB(mContext);
-        empty = rootView.findViewById(R.id.emptyVesti1);
+        empty = myRootView.findViewById(R.id.emptyVesti1);
     }
 
     @Override
     public IstorijaListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.istorija_list_item, parent, false);
-        ViewHolder vh = new ViewHolder(v);
 
-        return vh;
+        return new ViewHolder(v);
     }
 
+    //Sets title and data text, if the dataset is empty, set the empty text view as visible
     @Override
     public void onBindViewHolder(IstorijaListAdapter.ViewHolder holder, int position) {
         holder.getTextViewData().setText(mDataSet.get(position));
         holder.getTextViewTitle().setText(mTitlesSet.get(position));
-        if (mTitlesSet.size() == 0){
+        if (mTitlesSet.size() == 0) {
 
             empty.setVisibility(View.VISIBLE);
         } else {
@@ -89,10 +93,13 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
         return mDataSet.size();
     }
 
-    public void addTitle(String title){
+    /**
+     * Adds Titles to the adapter and local storage
+     */
+    public void addTitle(String title) {
         mTitlesSet.add(0, title);
-        if (mTitlesSet.size() > 30){
-            for (int i = 30; i < mTitlesSet.size(); i++){
+        if (mTitlesSet.size() > 30) {
+            for (int i = 30; i < mTitlesSet.size(); i++) {
                 mTitlesSet.remove(i);
             }
             tinyDB.putListString("istorijaTitles", mTitlesSet);
@@ -101,68 +108,60 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
         empty.setVisibility(View.GONE);
     }
 
-    public void addData(String data){
+    /**
+     * Adds Data to the adapter and local storage
+     */
+    public void addData(String data) {
         mDataSet.add(0, data);
-        if (mDataSet.size() > 30){
-            for (int i = 30; i < mDataSet.size(); i++){
+        if (mDataSet.size() > 30) {
+            for (int i = 30; i < mDataSet.size(); i++) {
                 mDataSet.remove(i);
             }
             tinyDB.putListString("istorijaData", mDataSet);
         }
-//        tinyDB.putListString("istorijaData", mDataSet);
     }
 
-    public void addUrl(String url){
+    /**
+     * Adds URLs to the adapter and local storage
+     */
+    public void addUrl(String url) {
         mUrlsSet.add(0, url);
-        if (mUrlsSet.size() > 30){
-            for (int i = 30; i < mUrlsSet.size(); i++){
+        if (mUrlsSet.size() > 30) {
+            for (int i = 30; i < mUrlsSet.size(); i++) {
                 mUrlsSet.remove(i);
             }
             tinyDB.putListString("istorijaUrls", mUrlsSet);
 
         }
-//        tinyDB.putListString("istorijaUrls", mUrlsSet);
     }
 
-    public void removeAt(int position){
-
-        mTitlesSet.remove(position);
-        mDataSet.remove(position);
-        mUrlsSet.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, mTitlesSet.size());
-        tinyDB.putListString("istorijaTitles", mTitlesSet);
-        tinyDB.putListString("istorijaData", mDataSet);
-        tinyDB.putListString("istorijaUrls", mUrlsSet);
-        if (mTitlesSet.size() == 0){
-
-            empty.setVisibility(View.VISIBLE);
-        }
-
-    }
-
-    public void clearAll(){
+    /**
+     * Clears data from the adapter and local storage
+     * and sets empty text view object to be visible
+     */
+    public void clearAll() {
         int size = mTitlesSet.size();
         clearTitles();
         clearData();
         clearUrls();
         notifyItemRangeRemoved(0, size);
-        if (mTitlesSet.size() == 0){
+        if (mTitlesSet.size() == 0) {
 
             empty.setVisibility(View.VISIBLE);
         }
     }
 
-    public void clearTitles(){
+    private void clearTitles() {
         mTitlesSet.clear();
         tinyDB.putListString("istorijaTitles", mTitlesSet);
     }
 
-    public void clearData(){
+    private void clearData() {
         mDataSet.clear();
         tinyDB.putListString("istorijaData", mDataSet);
     }
-    public void clearUrls(){
+
+    private void clearUrls() {
         mUrlsSet.clear();
         tinyDB.putListString("istorijaUrls", mUrlsSet);
     }

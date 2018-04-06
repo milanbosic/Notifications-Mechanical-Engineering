@@ -5,29 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 
 /**
- * Created by milan on 10.10.2017..
+ * Tab that shows all "unread" elements. If a notification is opened, or the card
+ * is clicked on, the coresponding card is removed.
  */
 
 public class Tab2Vesti extends Fragment {
@@ -36,127 +27,84 @@ public class Tab2Vesti extends Fragment {
 
     RecyclerView mRecyclerView;
     private VestiListAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<String> mDataset;
     private ArrayList<String> mTitlesSet;
     private ArrayList<String> mUrlsSet;
-    private Button button;
-    private int counter;
-
     private TextView emptyText;
     TinyDB tinyDB;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        IntentFilter intentFilter = new IntentFilter("com.notifikacijevesti.refresh");
+        /* Declare an intent filter and register a receiver for it
+         * in order to refresh or clear the list when a notification is received */
+        IntentFilter intentFilter = new IntentFilter(MyFirebaseMessagingService.UPDATE_VESTI);
         LocalBroadcastManager.getInstance(this.getContext()).registerReceiver(onNotice, intentFilter);
 
-//        TinyDB tinyDB = new TinyDB(getContext());
-
-//        tinyDB.clear();
-//        ArrayList<String> test = new ArrayList<>();
-//        test.add(0, "PREDMET 1");
-//
-//        ArrayList<String> test1 = new ArrayList<>();
-//        test1.add(0, "VEST 1");
-//
-//        ArrayList<String> test2 = new ArrayList<>();
-//        test2.add(0, "http://www.youtube.com");
-//
-//        tinyDB.putListString("titles", test);
-//        tinyDB.putListString("vesti", test1);
-//        tinyDB.putListString("urls", test2);
-
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.tab2vesti, container, false);
         rootView.setTag(TAG);
 
+        // text object to show when the list is empty
         emptyText = rootView.findViewById(R.id.emptyVesti);
 
-        initDataset(rootView);
+        initDataset();
 
         mRecyclerView = rootView.findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-//        itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
+        // initialize the adapter that regulates data
         mAdapter = new VestiListAdapter(mDataset, mTitlesSet, mUrlsSet, getContext(), rootView);
 
         mRecyclerView.setAdapter(mAdapter);
 
-//        button = rootView.findViewById(R.id.button2);
-//
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                TinyDB tinyDB = new TinyDB(getContext());
-//                ArrayList<String> listData = tinyDB.getListString("vesti");
-//                ArrayList<String> listTitles = tinyDB.getListString("titles");
-//                ArrayList<String> listUrls = tinyDB.getListString("urls");
-//
-//                listTitles.add(0,"TEST DSFSADFASDFASDFSDAFSDAFSDAFSDFSDF ASDFSDFSADF SDFASF");
-//                listData.add(0, "Термин поправног(писаног) делaаaa испита + Усмени фебруарски рок");
-//                listUrls.add(0, "http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
-//
-//                tinyDB.putListString("titles", listTitles);
-//                tinyDB.putListString("vesti", listData);
-//                tinyDB.putListString("urls", listUrls);
-//
-//                ArrayList<String> titleSet = tinyDB.getListString("istorijaTitles");
-//                ArrayList<String> dataSet = tinyDB.getListString("istorijaData");
-//                ArrayList<String> urlSet = tinyDB.getListString("istorijaUrls");
-//
-//                titleSet.add(0, "TEST DSFSADFASDFASDFSDAFSDAFSDAFSDFSDF ASDFSDFSADF SDFASF");
-//                dataSet.add(0, "Термин поправног(писаног) делaаaa испита + Усмени фебруарски рок");
-//                urlSet.add(0, "http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
-//
-//                tinyDB.putListString("istorijaTitles", titleSet);
-//                tinyDB.putListString("istorijaData", dataSet);
-//                tinyDB.putListString("istorijaUrls", urlSet);
-//
-//                mAdapter.addTitle("TEST DSFSADFASDFASDFSDAFSDAFSDAFSDFSDF ASDFSDFSADF SDFASF");
-//                mAdapter.addData("Термин поправног(писаног) делаaaa испита + Усмени фебруарски рок");
-//                mAdapter.addUrl("http://nastava.mas.bg.ac.rs/nastava/viewtopic.php?f=16&t=3062");
-//                counter++;
-//
-//                mAdapter.notifyItemInserted(0);
-//                mRecyclerView.scrollToPosition(0);
-//            }
-//        });
-
-//        FloatingActionButton fab = rootView.findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                Snackbar.make(view, "Sve vesti su obrisane.", Snackbar.LENGTH_LONG)
-////                        .setAction("Action", null).show();
-//                mAdapter.clearAll();
-//                Toast.makeText(getContext(),  "Sve vesti su obrisane.", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
         return rootView;
     }
 
+    // Intialize data from local storage if it is available
+    private void initDataset() {
 
+        tinyDB = new TinyDB(this.getContext());
+        ArrayList<String> listData = tinyDB.getListString("vesti");
+        ArrayList<String> listTitles = tinyDB.getListString("titles");
+        ArrayList<String> listUrls = tinyDB.getListString("urls");
+
+        if (!listData.isEmpty()) {
+            mDataset = listData;
+            mTitlesSet = listTitles;
+            mUrlsSet = listUrls;
+
+        } else {
+            mDataset = new ArrayList<>();
+            mTitlesSet = new ArrayList<>();
+            mUrlsSet = new ArrayList<>();
+            emptyText.setVisibility(View.VISIBLE);
+
+        }
+    }
+
+    // Intent receiver that diferentiates between calls to delete data or update the adapter
     private BroadcastReceiver onNotice = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            if (intent.getBooleanExtra("shouldDelete", false)){
-                int index = intent.getIntExtra("index", -1);
-//                Log.d("test123", "LOG 3: Index at Tab2Vesti " + index + "vest: ");
-                if (index != -1) mAdapter.removeWithoutChangingDatabaseAt(index);
-                //mAdapter.notifyDataSetChanged();
-            } else if(intent.getBooleanExtra("fromMain", false)){
+            /* If SHOULD_DELETE extra string is true, the notification has been clicked on,
+            hence delete the item from the list */
+            if (intent.getBooleanExtra(NotificationClickReceiver.SHOULD_DELETE, false)) {
+                int index = intent.getIntExtra(NotificationClickReceiver.INDEX, -1);
+                // No need to update local storage since that has been done in the activity that sent this intent
+                if (index != -1) mAdapter.removeWithoutUpdatingDatabaseAt(index);
+            }
+            // If fromMain string is true, this is a call from the FAB from MainActivity to delete all data
+            else if (intent.getBooleanExtra("fromMain", false)) {
                 mAdapter.clearAll();
             }
-            else{
+            // If none is true, the intent comes from Firebase Service, simply add the new item
+            else {
                 mAdapter.addData(MyFirebaseMessagingService.novaVest);
                 mAdapter.addTitle(MyFirebaseMessagingService.newTitle);
                 mAdapter.addUrl(MyFirebaseMessagingService.newUrl);
@@ -168,48 +116,5 @@ public class Tab2Vesti extends Fragment {
         }
     };
 
-    private void runLayoutAnimation(final RecyclerView recyclerView) {
-        final Context context = recyclerView.getContext();
-        final LayoutAnimationController controller =
-                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_slide_from_bottom);
-
-        recyclerView.setLayoutAnimation(controller);
-        recyclerView.scheduleLayoutAnimation();
-    }
-
-    private void initDataset(View view) {
-
-        tinyDB = new TinyDB(this.getContext());
-        ArrayList<String> listData = tinyDB.getListString("vesti");
-        ArrayList<String> listTitles = tinyDB.getListString("titles");
-        ArrayList<String> listUrls = tinyDB.getListString("urls");
-
-        if (!listData.isEmpty()){
-            mDataset = listData;
-            mTitlesSet = listTitles;
-            mUrlsSet = listUrls;
-
-        } else{
-            mDataset = new ArrayList<>();
-            mTitlesSet = new ArrayList<>();
-            mUrlsSet = new ArrayList<>();
-            emptyText.setVisibility(View.VISIBLE);
-
-        }
-    }
-
-//    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-//
-//        @Override
-//        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-//            return false;
-//        }
-//
-//        @Override
-//        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-//            mAdapter.removeAt(viewHolder.getAdapterPosition());
-//        }
-//
-//    };
 }
 

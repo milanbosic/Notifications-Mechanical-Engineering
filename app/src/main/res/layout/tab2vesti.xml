@@ -1,18 +1,8 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:animateLayoutChanges="true">
-
-    <!--<Button-->
-        <!--android:id="@+id/button2"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="top|right"-->
-        <!--android:paddingTop="10dp"-->
-        <!--android:text="TEST DODAJ"-->
-        <!--android:textAlignment="center"/>-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -21,19 +11,6 @@
         android:layout_marginTop="4dp"
         android:layoutAnimation="@anim/layout_animation_slide_from_bottom"/>
 
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/fab"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-
-        <!--android:scaleType="center"-->
-        <!--android:layout_gravity="bottom|right"-->
-
-        <!--android:layout_marginRight="20dp"-->
-        <!--android:layout_marginBottom="70dp"-->
-        <!--app:fabSize="normal"-->
-        <!--app:srcCompat="@drawable/ic_delete1"-->
-        <!--android:layout_marginEnd="20dp" />-->
 
     <TextView
         android:id="@+id/emptyVesti"

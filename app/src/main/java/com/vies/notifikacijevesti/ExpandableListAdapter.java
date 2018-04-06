@@ -7,7 +7,6 @@ import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +15,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -33,16 +29,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 
 /**
- * Created by milan on 12.10.2017..
+ * Provide list data to the expandable list in Tab3Vesti.
  */
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
-    public ArrayList<String> mSelectedSubjects;
+    private ArrayList<String> mSelectedSubjects;
     private Context mContext;
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listHashMap;
@@ -64,68 +59,62 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private RequestQueue requestQueue;
 
-    public void onStop(){
-        if (requestQueue != null){
+    /**
+     * Close a Volley request on app closure, if it exists
+     */
+    public void onStop() {
+        if (requestQueue != null) {
 
             requestQueue.cancelAll(FeedbackActivity.VolleyTag);
         }
     }
 
-
-    public ExpandableListAdapter (Context context, List<String> listDataHeader, HashMap<String, List<String>> listHashMap, View mainView){
+    ExpandableListAdapter(Context context, List<String> listDataHeader,
+                          HashMap<String, List<String>> listHashMap, View mView) {
         this.mContext = context;
         this.listDataHeader = listDataHeader;
         this.listHashMap = listHashMap;
-        mView = mainView;
+        this.mView = mView;
         mChildCheckStates = new HashMap<Integer, Boolean[]>();
-        mProgressBar = mainView.findViewById(R.id.progressBar);
-        //mSearchView = mainView.findViewById(R.id.search);
-        mExpandableListView = mainView.findViewById(R.id.lvExp);
+        mProgressBar = mView.findViewById(R.id.progressBar);
+        mExpandableListView = mView.findViewById(R.id.lvExp);
 
         tinyDB = new TinyDB(context);
 
-
         mProgressBar.setVisibility(View.INVISIBLE);
-        //mSearchView.setVisibility(View.VISIBLE);
         mExpandableListView.setVisibility(View.VISIBLE);
 
+        // Load data if it exists in local storage, otherwise initialize lists
         if (tinyDB.contains("selectedSubjects")) {
             mSelectedSubjects = tinyDB.getListString("selectedSubjects");
-        } else{
+        } else {
             mSelectedSubjects = new ArrayList<>();
         }
 
         if (tinyDB.contains("oasSelected")) {
             oasSelected = tinyDB.getListBoolean("oasSelected");
-            Log.d("test1", oasSelected.get(0).toString());
         } else {
             oasSelected = new ArrayList<>();
-            for (int i = 0; i < listHashMap.get("Osnovne Akademske Studije").size(); i++) oasSelected.add(false);
+            for (int i = 0; i < listHashMap.get("Osnovne Akademske Studije").size(); i++)
+                oasSelected.add(false);
         }
 
         if (tinyDB.contains("masSelected")) {
             masSelected = tinyDB.getListBoolean("masSelected");
-        } else{
+        } else {
             masSelected = new ArrayList<>();
-            for (int i = 0; i < listHashMap.get("Master Akademske Studije").size(); i++) masSelected.add(false);
+            for (int i = 0; i < listHashMap.get("Master Akademske Studije").size(); i++)
+                masSelected.add(false);
         }
 
         if (tinyDB.contains("katedreSelected")) {
             katedreSelected = tinyDB.getListBoolean("katedreSelected");
-        } else{
+        } else {
             katedreSelected = new ArrayList<>();
-            for (int i = 0; i < listHashMap.get("Katedre").size(); i ++) katedreSelected.add(false);
+            for (int i = 0; i < listHashMap.get("Katedre").size(); i++) katedreSelected.add(false);
         }
 
-//        if (tinyDB.contains("ostaloSelected")) {
-//            ostaloSelected = tinyDB.getListBoolean("ostaloSelected");
-//        } else{
-//            ostaloSelected = new ArrayList<>();
-//            for (int i = 0; i < 2; i++) ostaloSelected.add(false);
-//        }
     }
-
-
 
     @Override
     public int getGroupCount() {
@@ -142,7 +131,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         int numTrue = 0;
         int size = 0;
         ArrayList<Boolean> list = new ArrayList<>();
-        switch (groupPosition){
+        switch (groupPosition) {
             case 0:
                 list = oasSelected;
                 size = list.size();
@@ -156,12 +145,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 size = list.size();
                 break;
         }
-        for (int i = 0; i < size; i++){
-            if (list.get(i)){
+        for (int i = 0; i < size; i++) {
+            if (list.get(i)) {
                 numTrue++;
             }
         }
-        return listDataHeader.get(groupPosition).toString() + " (" + numTrue + "/" + list.size() + ")";
+        return listDataHeader.get(groupPosition) + " (" + numTrue + "/" + list.size() + ")";
     }
 
     @Override
@@ -184,45 +173,49 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
+    /**
+     * Get the group view, set text based on the position
+     * and set group checkbox state to checked if all children are checked
+     */
     @Override
     public View getGroupView(final int groupPosition, final boolean isExpanded, View convertView, final ViewGroup parent) {
         String headerTitle = getGroup(groupPosition);
-        if (convertView == null){
+        if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.exp_list_group, null);
             groupViewHolder = new GroupViewHolder();
-            groupViewHolder.mGroupText = (TextView)  convertView.findViewById(R.id.lbListHeader);
+            groupViewHolder.mGroupText = convertView.findViewById(R.id.lbListHeader);
             groupViewHolder.mGroupCheckBox = convertView.findViewById(R.id.chckBoxGroup);
             convertView.setTag(groupViewHolder);
-        } else{
+        } else {
             groupViewHolder = (GroupViewHolder) convertView.getTag();
         }
 
-        CheckBox checkBox = convertView.findViewById(R.id.chckBoxGroup);
-
         groupViewHolder.mGroupText.setTypeface(null, Typeface.BOLD);
         groupViewHolder.mGroupText.setText(headerTitle);
+
+        //Set onCheckedChangeListener to null before setting the group checkbox state
         groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(null);
 
-        switch (groupPosition){
+        switch (groupPosition) {
             case 0:
                 if (areAllTrue(oasSelected)) {
                     groupViewHolder.mGroupCheckBox.setChecked(true);
-                } else{
+                } else {
                     groupViewHolder.mGroupCheckBox.setChecked(false);
                 }
                 break;
             case 1:
                 if (areAllTrue(masSelected)) {
                     groupViewHolder.mGroupCheckBox.setChecked(true);
-                } else{
+                } else {
                     groupViewHolder.mGroupCheckBox.setChecked(false);
                 }
                 break;
             case 2:
                 if (areAllTrue(katedreSelected)) {
                     groupViewHolder.mGroupCheckBox.setChecked(true);
-                } else{
+                } else {
                     groupViewHolder.mGroupCheckBox.setChecked(false);
                 }
                 break;
@@ -233,18 +226,22 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
+    /**
+     * Get child views, set text and add or remove checked states from lists
+     */
     @Override
     public View getChildView(final int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final String childText = (String)getChild(groupPosition, childPosition);
+        final String childText = (String) getChild(groupPosition, childPosition);
         final int mGroupPosition = groupPosition;
         final int mChildPosition = childPosition;
 
-        if (convertView == null){
+        if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.exp_list_item, null);
 
             childViewHolder = new ChildViewHolder();
-            childViewHolder.mCheckBox = (CheckBox) convertView.findViewById(R.id.checkBoxListItem);
+            //****
+            childViewHolder.mCheckBox = convertView.findViewById(R.id.checkBoxListItem);
 
             convertView.setTag(R.layout.exp_list_item, childViewHolder);
         } else {
@@ -253,13 +250,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     .getTag(R.layout.exp_list_item);
         }
 
+        /* bug * Checkbox object needs to be declared here separately
+         * since getting checkbox text using the childviewholder seems to result in wrong text for some reason */
         final CheckBox cb = convertView.findViewById(R.id.checkBoxListItem);
 
         childViewHolder.mCheckBox.setText(childText);
 
         childViewHolder.mCheckBox.setOnCheckedChangeListener(null);
 
-        switch (groupPosition){
+        // Set the array with subjects based on the group position
+        switch (groupPosition) {
             case 0:
                 checkedArray = oasSelected;
                 break;
@@ -269,156 +269,127 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             case 2:
                 checkedArray = katedreSelected;
                 break;
-//            case 3:
-//                checkedArray = ostaloSelected;
-//                break;
+
         }
         childViewHolder.mCheckBox.setChecked(checkedArray.get(childPosition));
 
+        // Checkbox onCheckedChangeListener
         childViewHolder.mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-            switch (groupPosition){
-                case 0:
-                    oasSelected.set(mChildPosition, isChecked);
-                    changeChecked(oasSelected, groupPosition);
-                    break;
-                case 1:
-                    masSelected.set(mChildPosition, isChecked);
-                    changeChecked(masSelected, groupPosition);
-                    break;
-                case 2:
-                    katedreSelected.set(mChildPosition, isChecked);
-                    changeChecked(katedreSelected, groupPosition);
-                    break;
-//                    case 3:
-//                        ostaloSelected.set(mChildPosition, isChecked);
-//                        break;
+                switch (groupPosition) {
+                    case 0:
+                        oasSelected.set(mChildPosition, isChecked);
+                        changeGroupCheckedState(oasSelected, groupPosition);
+                        break;
+                    case 1:
+                        masSelected.set(mChildPosition, isChecked);
+                        changeGroupCheckedState(masSelected, groupPosition);
+                        break;
+                    case 2:
+                        katedreSelected.set(mChildPosition, isChecked);
+                        changeGroupCheckedState(katedreSelected, groupPosition);
+                        break;
+
+                }
+
+                // Add or remove the text value of the coresponding checkboxes
+                if (isChecked) {
+                    mSelectedSubjects.add(cb.getText().toString());
+                } else {
+                    mSelectedSubjects.remove(cb.getText().toString());
+                }
+
+                groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(null);
+
+                notifyDataSetChanged();
+                for (int m = 0; m < mSelectedSubjects.size(); m++) {
+                    Log.d("selected subjects", mSelectedSubjects.get(m));
+                }
+
             }
-
-            if (isChecked) {
-
-                mSelectedSubjects.add(cb.getText().toString());
-
-            } else{
-                mSelectedSubjects.remove(cb.getText().toString());
-            }
-
-            groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(null);
-
-//            for ( int i = 0; i < mSelectedSubjects.size(); i++){
-//                if (i == 0){
-//                    Log.d("selectedsubjects", "POCETAK");
-//                }
-//                Log.d("selectedsubjects", mSelectedSubjects.get(i));
-//            }
-            notifyDataSetChanged();
-
-//                mExpandableListView.collapseGroup(groupPosition);
-//                mExpandableListView.expandGroup(groupPosition);
-
-
-
-        }
-    });
-//        if (isChildSelected){
-//            childViewHolder.mCheckBox.setChecked(selectionTrueOrFalse);
-//            if (childPosition == getChildrenCount(groupPosition)-1){
-//                isChildSelected = false;
-//            }
-//
-//        } else{
-//            childViewHolder.mCheckBox.setChecked(checkedArray.get(childPosition));
-//        }
+        });
 
         return convertView;
     }
 
-    public void onButtonPress(){
-//        if (new HashSet (mSelectedSubjects).equals(new HashSet(tinyDB.getListString("selectedSubjects")))){
-//
-//        }
-        ArrayList<String> databaseList = tinyDB.getListString("selectedSubjects");
-        if (mSelectedSubjects.containsAll(databaseList) && databaseList.containsAll(mSelectedSubjects)){
-            //Toast.makeText(mContext, "Lista predmeta je ista", Toast.LENGTH_SHORT).show();
-            Snackbar snackbar = Snackbar.make(mView, "Već ste sačuvali ovu listu predmeta.", Snackbar.LENGTH_SHORT);
-            View view = snackbar.getView();
-            TextView tv = view.findViewById(android.support.design.R.id.snackbar_text);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-                tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            else
-                tv.setGravity(Gravity.CENTER_HORIZONTAL);
-            snackbar.show();
-        } else{
-            String url ="http://165.227.154.9/api/";
+    /**
+     * On Save button press
+     * Send an HTTP request with a JSON string with a Firebase token and a list of selected subjects to the server
+     * if it succeeds save the list to local storage
+     * otherwise display an Alert Dialog indicating an error
+     * disable clickable objects  and enable progress bar until the action is completed
+     */
 
-            HashMap<String, String> params = new HashMap<String, String>();
+    private void ToggleProgressBar(boolean enableOrDisable) {
+        if (enableOrDisable) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mExpandableListView.setVisibility(View.INVISIBLE);
+        } else {
+            mProgressBar.setVisibility(View.INVISIBLE);
+            mExpandableListView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void onButtonPress() {
+
+        ArrayList<String> databaseList = tinyDB.getListString("selectedSubjects");
+        if (mSelectedSubjects.containsAll(databaseList) && databaseList.containsAll(mSelectedSubjects)) {
+            Snackbar snackbar = Snackbar.make(mView, "Već ste sačuvali ovu listu predmeta.", Snackbar.LENGTH_SHORT);
+            snackbar.show();
+        } else {
+            String url = "http://165.227.154.9/api/";
+
+            HashMap<String, String> params = new HashMap<>();
 
             params.put("token", FirebaseInstanceId.getInstance().getToken());
-            mProgressBar.setVisibility(View.VISIBLE);
-//            mSearchView.setVisibility(View.INVISIBLE);
-            mExpandableListView.setVisibility(View.INVISIBLE);
+            ToggleProgressBar(true);
 
             int i = 0;
-            for(String object: mSelectedSubjects){
-                params.put("topics["+(i++)+"]", object);
+            for (String object : mSelectedSubjects) {
+                params.put("topics[" + (i++) + "]", object);
             }
 
             Response.ErrorListener errorListen = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    //VolleyLog.v("responseJson: ", error);
                     serverErrorDialog();
-                    mProgressBar.setVisibility(View.INVISIBLE);
-                    mExpandableListView.setVisibility(View.VISIBLE);
-
+                    ToggleProgressBar(false);
                 }
             };
 
             Response.Listener<JSONObject> responseListen = new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                try{
-                    //Log.d("Response: ", response.getString("message"));
-                    if (response.getString("message").contains("Success")){
+                    try {
+                        if (response.getString("message").contains("Success")) {
 
-                        if (mSelectedSubjects != null) {
-                            tinyDB.putListString("selectedSubjects", mSelectedSubjects);
+                            if (mSelectedSubjects != null) {
+                                tinyDB.putListString("selectedSubjects", mSelectedSubjects);
+                            }
+
+                            tinyDB.putListBoolean("oasSelected", oasSelected);
+
+                            tinyDB.putListBoolean("masSelected", masSelected);
+
+                            tinyDB.putListBoolean("katedreSelected", katedreSelected);
+
+                            Snackbar snackbar = Snackbar.make(mView, "Uspešno sačuvano.", Snackbar.LENGTH_SHORT);
+                            snackbar.show();
+                            ToggleProgressBar(false);
+
+                        } else {
+                            serverErrorDialog();
+                            ToggleProgressBar(false);
+
                         }
-
-                        tinyDB.putListBoolean("oasSelected", oasSelected);
-
-                        tinyDB.putListBoolean("masSelected", masSelected);
-
-                        tinyDB.putListBoolean("katedreSelected", katedreSelected);
-
-//                            tinyDB.putListBoolean("ostaloSelected", ostaloSelected);
-//                            Toast.makeText(mContext,  "Успешно сачувано.", Toast.LENGTH_SHORT).show();
-                        Snackbar snackbar = Snackbar.make(mView, "Uspešno sačuvano.", Snackbar.LENGTH_SHORT);
-                        View view = snackbar.getView();
-                        TextView tv = view.findViewById(android.support.design.R.id.snackbar_text);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-                            tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                        else
-                            tv.setGravity(Gravity.CENTER_HORIZONTAL);
-
-                        snackbar.show();
-                        mProgressBar.setVisibility(View.INVISIBLE);
-//                        mSearchView.setVisibility(View.VISIBLE);
-                        mExpandableListView.setVisibility(View.VISIBLE);
-                    } else{
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                         serverErrorDialog();
-                        mProgressBar.setVisibility(View.INVISIBLE);
-//                        mSearchView.setVisibility(View.VISIBLE);
-                        mExpandableListView.setVisibility(View.VISIBLE);
+                        ToggleProgressBar(false);
+
                     }
-                }catch (JSONException e){
-                    e.printStackTrace();
-                    serverErrorDialog();
-                    mProgressBar.setVisibility(View.INVISIBLE);
-                    mExpandableListView.setVisibility(View.VISIBLE);
-                }
                 }
             };
 
@@ -437,25 +408,38 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
-    public void filterData(String query){
-
-        query = query.toLowerCase();
-//        Log.d("MyListAdapter", String.valueOf(listDataHeader.size()));
-
-    }
-
     public final class GroupViewHolder {
-
         TextView mGroupText;
+
         CheckBox mGroupCheckBox;
+
     }
 
     public final class ChildViewHolder {
-
         CheckBox mCheckBox;
+
     }
 
-    private void serverErrorDialog(){
+    // Check if all children checkboxes are true
+    private boolean areAllTrue(ArrayList<Boolean> array) {
+        for (boolean b : array) if (!b) return false;
+        return true;
+    }
+
+    // Change group checkbox state if all children checkboxes are checked
+    private void changeGroupCheckedState(ArrayList<Boolean> list, int groupPosition) {
+        if (areAllTrue(list)) {
+            groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(null);
+            groupViewHolder.mGroupCheckBox.setChecked(true);
+            groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(new MyOnCheckedChangeListener(groupPosition, mExpandableListView.isGroupExpanded(groupPosition)));
+        } else {
+            groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(null);
+            groupViewHolder.mGroupCheckBox.setChecked(false);
+            groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(new MyOnCheckedChangeListener(groupPosition, mExpandableListView.isGroupExpanded(groupPosition)));
+        }
+    }
+
+    private void serverErrorDialog() {
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Light_Dialog_Alert);
@@ -473,121 +457,82 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 .show();
     }
 
-    public class MyOnCheckedChangeListener implements CompoundButton.OnCheckedChangeListener{
+    /**
+     * Custom OnCheckedChangeListener for group checkboxes
+     * Adds or removes children text from the mSelectedList based on the checked state
+     */
+    public class MyOnCheckedChangeListener implements CompoundButton.OnCheckedChangeListener {
 
         int groupPosition;
         boolean isExpanded;
-        public MyOnCheckedChangeListener(int groupPosition, boolean isExpanded){
+
+        MyOnCheckedChangeListener(int groupPosition, boolean isExpanded) {
             this.groupPosition = groupPosition;
             this.isExpanded = isExpanded;
         }
+
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             ArrayList<String> referenceArray = new ArrayList<>();
 
-            switch (groupPosition){
+            switch (groupPosition) {
                 case 0:
                     referenceArray = (ArrayList<String>) listHashMap.get("Osnovne Akademske Studije");
 
-                    for (int i = 0; i < oasSelected.size(); i++){
+                    for (int i = 0; i < oasSelected.size(); i++) {
                         oasSelected.set(i, isChecked);
                     }
                     break;
                 case 1:
                     referenceArray = (ArrayList<String>) listHashMap.get("Master Akademske Studije");
 
-                    for (int i = 0; i < masSelected.size(); i++){
+                    for (int i = 0; i < masSelected.size(); i++) {
                         masSelected.set(i, isChecked);
                     }
                     break;
                 case 2:
                     referenceArray = (ArrayList<String>) listHashMap.get("Katedre");
 
-                    for (int i = 0; i < katedreSelected.size(); i++){
+                    for (int i = 0; i < katedreSelected.size(); i++) {
                         katedreSelected.set(i, isChecked);
                     }
                     break;
-//                    case 3:
-//                        ostaloSelected.set(mChildPosition, isChecked);
-//                        break;
+
             }
 
-            if (isChecked){
+            // Add or remove children text from the selected list without duplicates
+            if (isChecked) {
                 boolean shouldAdd = true;
-                for (int i = 0; i < referenceArray.size(); i++){
-                    for (int j = 0; j < mSelectedSubjects.size(); j++){
-                        if (referenceArray.get(i).equals(mSelectedSubjects.get(j))){
+                for (int i = 0; i < referenceArray.size(); i++) {
+                    for (int j = 0; j < mSelectedSubjects.size(); j++) {
+                        if (referenceArray.get(i).equals(mSelectedSubjects.get(j))) {
                             shouldAdd = false;
                         }
                     }
+
                     if (shouldAdd) {
                         mSelectedSubjects.add(referenceArray.get(i));
-                        shouldAdd = true;
                     }
 
-                    if (!shouldAdd) shouldAdd=true;
+                    if (!shouldAdd) shouldAdd = true;
                 }
-            } else{
-                for (int i = 0; i < referenceArray.size(); i++){
-                    for (int j = 0; j < mSelectedSubjects.size(); j++){
-                        if (referenceArray.get(i).equals(mSelectedSubjects.get(j))){
+
+            } else {
+                for (int i = 0; i < referenceArray.size(); i++) {
+                    for (int j = 0; j < mSelectedSubjects.size(); j++) {
+                        if (referenceArray.get(i).equals(mSelectedSubjects.get(j))) {
                             mSelectedSubjects.remove(referenceArray.get(i));
-//                                shouldDelete = true;
                         }
                     }
-//                        if (shouldDelete) {
-//                            mSelectedSubjects.remove(referenceArray.get(i));
-//                            shouldDelete = false;
-//                        }
+
                 }
+
             }
-//            if (mSelectedSubjects.size()==0){
-//                Log.d("selectedsubjects", "PRAZNO");
-//            }
-//            for ( int i = 0; i < mSelectedSubjects.size(); i++){
-//                if (i == 0){
-//                    Log.d("selectedsubjects", "POCETAK");
-//                }
-//                Log.d("selectedsubjects", mSelectedSubjects.get(i));
-//            }
 
             notifyDataSetChanged();
-            if (isExpanded){
-//                mExpandableListView.collapseGroup(groupPosition);
-//                mExpandableListView.expandGroup(groupPosition);
-            } else{
-//                mExpandableListView.expandGroup(groupPosition);
-//                mExpandableListView.collapseGroup(groupPosition);
-            }
-
-//                if (!isExpanded){
-//                    mExpandableListView.expandGroup(groupPosition);
-//                } else {
-//                    mExpandableListView.collapseGroup(groupPosition);
-//                    mExpandableListView.expandGroup(groupPosition);
-//                }
-
-//                Object child = getChild(groupPosition, 0);
-            //childViewHolder.mCheckBox.setChecked(ndroid exp);
 
         }
-    }
 
-    private boolean areAllTrue(ArrayList<Boolean> array){
-        for (boolean b : array) if (!b) return false;
-        return true;
-    }
-
-    void changeChecked(ArrayList<Boolean> list, int groupPosition){
-        if (areAllTrue(list)){
-            groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(null);
-            groupViewHolder.mGroupCheckBox.setChecked(true);
-            groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(new MyOnCheckedChangeListener(groupPosition, mExpandableListView.isGroupExpanded(groupPosition)));
-        } else {
-            groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(null);
-            groupViewHolder.mGroupCheckBox.setChecked(false);
-            groupViewHolder.mGroupCheckBox.setOnCheckedChangeListener(new MyOnCheckedChangeListener(groupPosition, mExpandableListView.isGroupExpanded(groupPosition)));
-        }
     }
 
 

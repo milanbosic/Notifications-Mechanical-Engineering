@@ -9,20 +9,15 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RatingBar;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.jaredrummler.materialspinner.MaterialSpinner;
@@ -32,12 +27,16 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+/**
+ * Feedback Activity for sending feedback information
+ */
 public class FeedbackActivity extends AppCompatActivity {
     public RatingBar ratingBar;
     private String[] items;
     private EditText editText;
     private RequestQueue requestQueue;
     public static final String VolleyTag = "volleyTag";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,8 +49,10 @@ public class FeedbackActivity extends AppCompatActivity {
 
         final MaterialSpinner spinner = findViewById(R.id.categories_spinner);
         ratingBar = findViewById(R.id.ratingBar);
+        // Set the default number of stars for the rating bar
         ratingBar.setRating(5);
         editText = findViewById(R.id.textPoruka);
+        // Hide the keyboard by touching anything outside the editText
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -60,30 +61,32 @@ public class FeedbackActivity extends AppCompatActivity {
                 }
             }
         });
-        items = new String[] {"Utisak", "Prijavi grešku", "Sugestije"};
+        items = new String[]{"Utisak", "Prijavi grešku", "Sugestije"};
         spinner.setItems(items);
 
+        // Only one item on the spinner is supposed to be pair with a ratingBar
         spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
 
-            @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
 
-                if (position == 1 || position == 2){
+                if (position == 1 || position == 2) {
                     ratingBar.setVisibility(View.GONE);
                 } else {
-                    if (ratingBar.getVisibility() == View.GONE) ratingBar.setVisibility(View.VISIBLE);
+                    if (ratingBar.getVisibility() == View.GONE)
+                        ratingBar.setVisibility(View.VISIBLE);
                 }
             }
         });
 
+        // Floating action button that sends an HTTP request with information
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
 
-                if (editText.getText().length() <= 500){
-                    String url ="http://165.227.154.9/api/feedback";
+                if (editText.getText().length() <= 500) {
+                    String url = "http://165.227.154.9/api/feedback";
 
                     HashMap<String, String> params = new HashMap<String, String>();
 
@@ -91,7 +94,7 @@ public class FeedbackActivity extends AppCompatActivity {
 
                     params.put("category", items[spinner.getSelectedIndex()]);
 
-                    if (spinner.getSelectedIndex() == 1 || spinner.getSelectedIndex() == 2){
+                    if (spinner.getSelectedIndex() == 1 || spinner.getSelectedIndex() == 2) {
                         params.put("rating", "0");
                     } else {
                         params.put("rating", "" + ratingBar.getRating());
@@ -103,7 +106,7 @@ public class FeedbackActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
 //                            VolleyLog.v("responseJson: ", error);
-                                serverErrorDialog("Došlo je do greške u povezivanju sa serverom. Molimo pokušajte ponovo", view);
+                            serverErrorDialog("Došlo je do greške u povezivanju sa serverom. Molimo pokušajte ponovo", view);
 
                         }
                     };
@@ -111,17 +114,16 @@ public class FeedbackActivity extends AppCompatActivity {
                     Response.Listener<JSONObject> responseListen = new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            try{
-//                                Log.d("Response: ", response.getString("message"));
-                                if (response.getString("message").contains("Success")){
+                            try {
+                                if (response.getString("message").contains("Success")) {
 
                                     Snackbar.make(view, "Uspešno sačuvano", Snackbar.LENGTH_LONG).show();
-                                } else if(response.getString("message").contains("ticket")){
+                                } else if (response.getString("message").contains("ticket")) {
                                     serverErrorDialog("Vaša poruka je prihvaćena, molimo sačekajte da se obradi.", view);
-                                } else{
+                                } else {
                                     serverErrorDialog("Došlo je do greške u povezivanju sa serverom. Molimo pokušajte ponovo.", view);
                                 }
-                            }catch (JSONException e){
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                                 serverErrorDialog("Došlo je do greške u povezivanju sa serverom. Molimo pokušajte ponovo.", view);
                             }
@@ -141,17 +143,19 @@ public class FeedbackActivity extends AppCompatActivity {
 
     }
 
+    // Cancel volley request on application exit
     protected void onStop() {
 
         super.onStop();
-        if (requestQueue != null){
+        if (requestQueue != null) {
 
             requestQueue.cancelAll(VolleyTag);
         }
 
     }
 
-    private void serverErrorDialog(String str, View view){
+    // Alert dialog to show when an error happens
+    private void serverErrorDialog(String str, View view) {
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder = new AlertDialog.Builder(view.getContext(), android.R.style.Theme_Material_Light_Dialog_Alert);
@@ -170,7 +174,7 @@ public class FeedbackActivity extends AppCompatActivity {
     }
 
     public void hideKeyboard(View view) {
-        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 

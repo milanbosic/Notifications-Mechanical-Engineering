@@ -191,6 +191,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
 
+            // On button click, delete data from the list in Tab1Istorija
             Preference button = findPreference("button_key");
             button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
@@ -218,7 +219,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                                 tinyDB.putListString("istorijaData", dataSet);
                                 tinyDB.putListString("istorijaUrls", urlSet);
                                 Intent intent = new Intent();
-                                intent.setAction("com.notifikacijevesti.refreshhistory");
+                                intent.setAction(MyFirebaseMessagingService.UPDATE_ISTORIJA);
                                 intent.putExtra("extraString", "deleteActivity");
 
                                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
@@ -236,24 +237,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 }
             });
 
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-//            bindPreferenceSummaryToValue(findPreference("example_text"));
-//            bindPreferenceSummaryToValue(findPreference("example_list"));
         }
 
-//        @Override
-//        public boolean onOptionsItemSelected(MenuItem item) {
-//            int id = item.getItemId();
-//            if (id == android.R.id.home) {
-//                startActivity(new Intent(getActivity(), SettingsActivity.class));
-//                return true;
-//            }
-//            return super.onOptionsItemSelected(item);
-//        }
+
     }
 
     /**
@@ -268,23 +254,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_notification);
             setHasOptionsMenu(true);
 
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
             bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
 
         }
 
-//        @Override
-//        public boolean onOptionsItemSelected(MenuItem item) {
-//            int id = item.getItemId();
-//            if (id == android.R.id.home) {
-//                startActivity(new Intent(getActivity(), SettingsActivity.class));
-//                return true;
-//            }
-//            return super.onOptionsItemSelected(item);
-//        }
+
     }
 
 }

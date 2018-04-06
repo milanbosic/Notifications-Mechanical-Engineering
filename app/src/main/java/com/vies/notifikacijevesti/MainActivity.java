@@ -1,82 +1,51 @@
 package com.vies.notifikacijevesti;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
-import android.view.animation.Animation;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.TranslateAnimation;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.iid.FirebaseInstanceId;
-
 public class MainActivity extends AppCompatActivity {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
 
+    // A list of items in the navigation drawer with icons
     String TITLES[] = {"Istorija", "Vesti", "Predmeti", "Podešavanja", "Feedback", "O aplikaciji"};
+    int ICONS[] = {R.drawable.ic_list, R.drawable.ic_home, R.drawable.ic_events, R.drawable.ic_settings, R.drawable.ic_feedback, R.drawable.ic_info};
 
-    int ICONS[] = {R.drawable.ic_list, R.drawable.ic_home, R.drawable.ic_events,R.drawable.ic_settings,R.drawable.ic_feedback, R.drawable.ic_info};
+    // String resources for the title in the header
+    String PRIMARY = "Mašinski fakultet";
+    String SECONDARY = "Notifikacije o novim vestima";
+    // Logo in the header
+    int LOGO = R.mipmap.ic_logo_new;
 
-    //Similarly we Create a String Resource for the name and email in the header view
-    //And we also create a int resource for profile picture in the header view
+    RecyclerView mRecyclerView;
+    RecyclerView.Adapter mAdapter;
+    RecyclerView.LayoutManager mLayoutManager;
+    DrawerLayout Drawer;
 
-    String NAME = "Mašinski fakultet";
-    String EMAIL = "Notifikacije o novim vestima";
-    int PROFILE = R.mipmap.ic_logo_new;
-
-    private Toolbar toolbar;                              // Declaring the Toolbar Object
-
-    RecyclerView mRecyclerView;                           // Declaring RecyclerView
-    RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
-    RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
-    DrawerLayout Drawer;                                  // Declaring DrawerLayout
-
-    ActionBarDrawerToggle mDrawerToggle;                  // Declaring Action Bar Drawer Toggle
+    ActionBarDrawerToggle mDrawerToggle;
 
     FloatingActionButton fab;
-
-    Button saveButton1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,88 +55,86 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
+        /* Create the adapter that will return a fragment for each of the three
+         * primary sections of the activity */
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // Set up the ViewPager with the sections adapter.
+        // Set up the ViewPager with the sections adapter
         mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_list_dark);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_home_dark);
         tabLayout.getTabAt(2).setIcon(R.drawable.ic_events_dark);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
+        mRecyclerView = findViewById(R.id.RecyclerView);
 
-        mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
+        // Letting the system know that the list objects are of fixed size
+        mRecyclerView.setHasFixedSize(true);
 
-        mAdapter = new NavDrawerAdapter(TITLES,ICONS,NAME,EMAIL,PROFILE);       // Creating the Adapter of NavDrawerAdapter class(which we are going to see in a bit)
-        // And passing the titles,icons,header view name, view email,
-        // and header view profile picture
+        // Initialize the adapter for the navigation drawer
+        mAdapter = new NavDrawerAdapter(TITLES, ICONS, PRIMARY, SECONDARY);
 
-        mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
+        mRecyclerView.setAdapter(mAdapter);
 
-        mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
+        mLayoutManager = new LinearLayoutManager(this);
 
-        mRecyclerView.setLayoutManager(mLayoutManager);                 // Setting the layout Manager
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
-        Drawer = (DrawerLayout) findViewById(R.id.DrawerLayout);        // Drawer object Assigned to the view
-        mDrawerToggle = new ActionBarDrawerToggle(this,Drawer,toolbar,R.string.openDrawer,R.string.closeDrawer){
+        Drawer = findViewById(R.id.DrawerLayout);
+        mDrawerToggle = new ActionBarDrawerToggle(this, Drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
-                // open I am not going to put anything here)
+                // To execute once the drawer is opened
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                // Code here will execute once drawer is closed
+                // To execute once drawer is closed
             }
 
-        }; // Drawer Toggle Object Made
+        };
 
-        Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
-        mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
+        Drawer.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
 
+        /* Floating action button that deletes data in Tab2Vesti
+        *  and is only enabled on that tab */
         fab = findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.setAction("com.notifikacijevesti.refresh");
+                intent.setAction(MyFirebaseMessagingService.UPDATE_VESTI);
                 intent.putExtra("fromMain", true);
                 LocalBroadcastManager.getInstance(v.getContext()).sendBroadcast(intent);
                 Snackbar snackbar = Snackbar.make(v, "Sve vesti su obrisane.", Snackbar.LENGTH_SHORT);
-                View view = snackbar.getView();
-                TextView tv = view.findViewById(android.support.design.R.id.snackbar_text);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-                    tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                else
-                    tv.setGravity(Gravity.CENTER_HORIZONTAL);
                 snackbar.show();
             }
         });
 
-        if (!tinyDB.contains("firstTime")){
+        /* If a specific variable does not exist in local storage
+         * the app is started for the first time, so set the default tab to Tab3Predmeti
+         */
+        if (!tinyDB.contains("firstTime")) {
             mViewPager.setCurrentItem(2);
             if (fab != null) {
                 fab.hide();
             }
 
-        } else{
+        } else {
             mViewPager.setCurrentItem(1);
         }
 
-
+        // Show and hide FAB depending on the selected fragment
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
@@ -199,9 +166,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // On gesture listener for items in the nav drawer
         final GestureDetector mGestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
 
-            @Override public boolean onSingleTapUp(MotionEvent e) {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
                 return true;
             }
 
@@ -210,21 +179,21 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent motionEvent) {
-                View child = mRecyclerView.findChildViewUnder(motionEvent.getX(),motionEvent.getY());
+                View child = mRecyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
 
-                if(child!=null && mGestureDetector.onTouchEvent(motionEvent)){
+                if (child != null && mGestureDetector.onTouchEvent(motionEvent)) {
                     int position = mRecyclerView.getChildAdapterPosition(child);
-                    if (position > 0 && position < 4){
+                    if (position > 0 && position < 4) {
                         Drawer.closeDrawers();
                         mViewPager.setCurrentItem(mRecyclerView.getChildAdapterPosition(child) - 1);
 
-                    } else if(position == 4){
+                    } else if (position == 4) {
                         Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                         startActivity(intent);
-                    } else if (position == 5){
+                    } else if (position == 5) {
                         Intent intent = new Intent(getApplicationContext(), FeedbackActivity.class);
                         startActivity(intent);
-                    } else if (position == 6){
+                    } else if (position == 6) {
                         Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
                         startActivity(intent);
                     }
@@ -245,28 +214,24 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items to the action bar if it is present
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        /* Handle action bar item clicks here
+         * the action bar will automatically handle clicks on the Home/Up button */
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
-
 
             return true;
         }
@@ -294,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            switch(position){
+            switch (position) {
                 case 0:
                     Tab1Istorija tab1 = new Tab1Istorija();
 
