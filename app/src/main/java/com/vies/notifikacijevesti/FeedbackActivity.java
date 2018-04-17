@@ -1,6 +1,5 @@
 package com.vies.notifikacijevesti;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,10 +8,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -52,15 +53,27 @@ public class FeedbackActivity extends AppCompatActivity {
         // Set the default number of stars for the rating bar
         ratingBar.setRating(5);
         editText = findViewById(R.id.textPoruka);
-        // Hide the keyboard by touching anything outside the editText
-        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+        // Hide the keyboard by touching anything outside the editText (the relative layout)
+        // * Acessibility warning *
+        RelativeLayout relativeLayout = findViewById(R.id.relativeLayoutFeedback);
+        relativeLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    hideKeyboard(v);
-                }
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                return true;
             }
         });
+
+//        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if (!hasFocus) {
+//                    hideSoftKeyboard(v);
+//                }
+//            }
+//        });
         items = new String[]{"Utisak", "Prijavi grešku", "Sugestije"};
         spinner.setItems(items);
 
@@ -171,11 +184,6 @@ public class FeedbackActivity extends AppCompatActivity {
                 })
                 .setIcon(R.drawable.ic_alert)
                 .show();
-    }
-
-    public void hideKeyboard(View view) {
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 }
