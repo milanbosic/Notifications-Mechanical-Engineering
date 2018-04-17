@@ -113,11 +113,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     public void broadcastIntent() {
         Intent intent = new Intent();
-        intent.setAction(UPDATE_ISTORIJA);
+        intent.setAction(UPDATE_VESTI);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
 
         Intent intent1 = new Intent();
-        intent1.setAction(UPDATE_VESTI);
+        intent1.setAction(UPDATE_ISTORIJA);
         intent1.putExtra("extraString", "firebase");
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent1);
 
