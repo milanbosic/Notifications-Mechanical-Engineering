@@ -16,11 +16,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
+
+import com.google.android.gms.common.util.CrashUtils;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         TinyDB tinyDB = new TinyDB(this);
+
 
         setContentView(R.layout.activity_main);
 
@@ -213,6 +229,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //database.setPersistenceEnabled(true);
+        DatabaseReference myRef = database.getReference("feedback");
+        Log.d("FirebaseDatabase", "Initialized!");
+        //Log.d("FirebaseDatabase", "local storage: " + tinyDB.getString("feedbackFirebase"));
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Map<String, Object> map = (Map<String, Object>)dataSnapshot.getValue();
+                Log.d("FirebaseDatabase", "OnDataChange triggered and value is: " );
+                Set<String> s = map.keySet();
+                for (String value : s) {
+                    Log.d("FirebaseDatabase", value);
+                }
+                Set set = map.entrySet();
+                for (Object o : set) {
+                    Log.d("FirebaseDatabase", o.toString());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("FirebaseDatabase", databaseError.toException());
+                Toast.makeText(getApplicationContext(), databaseError.toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
     }
 
