@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +23,7 @@ import java.util.ArrayList;
  * is clicked on, the coresponding card is removed.
  */
 
-public class Tab2Vesti extends Fragment {
+public class Tab2Vesti extends Fragment implements CustomTabActivityHelper.ConnectionCallback {
 
     private static final String TAG = "RecyclerViewFragment";
 
@@ -31,6 +33,7 @@ public class Tab2Vesti extends Fragment {
     private ArrayList<String> mTitlesSet;
     private ArrayList<String> mUrlsSet;
     private TextView emptyText;
+    private CustomTabsIntent customTabsIntent;
     TinyDB tinyDB;
 
     @Override
@@ -40,6 +43,13 @@ public class Tab2Vesti extends Fragment {
          * in order to refresh or clear the list when a notification is received */
         IntentFilter intentFilter = new IntentFilter(MyFirebaseMessagingService.UPDATE_VESTI);
         LocalBroadcastManager.getInstance(this.getContext()).registerReceiver(onNotice, intentFilter);
+        customTabsIntent = new CustomTabsIntent.Builder()
+                .addDefaultShareMenuItem()
+                .setToolbarColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary))
+                .setShowTitle(true)
+                .setStartAnimations(getActivity(), R.anim.left_to_right_start, R.anim.right_to_left_start)
+                .setExitAnimations(getActivity(), R.anim.right_to_left_exit, R.anim.left_to_right_exit)
+                .build();
 
     }
 
@@ -58,7 +68,7 @@ public class Tab2Vesti extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // initialize the adapter that regulates data
-        mAdapter = new VestiListAdapter(mDataset, mTitlesSet, mUrlsSet, getContext(), rootView);
+        mAdapter = new VestiListAdapter(mDataset, mTitlesSet, mUrlsSet, getContext(), rootView, customTabsIntent);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -116,5 +126,14 @@ public class Tab2Vesti extends Fragment {
         }
     };
 
+    @Override
+    public void onCustomTabsConnected() {
+
+    }
+
+    @Override
+    public void onCustomTabsDisconnected() {
+
+    }
 }
 

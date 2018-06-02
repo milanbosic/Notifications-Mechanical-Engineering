@@ -1,9 +1,12 @@
 
 package com.vies.notifikacijevesti;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +29,9 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
     private TextView textViewEmpty;
     private Context context;
     private TinyDB tinyDB;
+
+    private CustomTabsIntent customTabsIntent;
+
     /**
      * Provide a reference to the type of views that are used (custom ViewHolder)
      */
@@ -33,26 +39,41 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
         public TextView textViewTitle;
         public TextView textViewData;
 
-        ViewHolder(View v)   {
+        ViewHolder(View v) {
             super(v);
 
             textViewTitle = v.findViewById(R.id.textViewTitle);
             textViewData = v.findViewById(R.id.textViewData);
             ImageButton button = (ImageButton) v.findViewById(R.id.delVestiButton);
+            /* Define a click listener for the delete button */
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (getAdapterPosition() != -1)
-                    removeAt(getAdapterPosition());
+                        removeAt(getAdapterPosition());
                 }
             });
             /* Define a click listener for the ViewHolder's View */
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrlsSet.get(getAdapterPosition())));
-                    context.startActivity(browserIntent);
+//                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrlsSet.get(getAdapterPosition())));
+//                    context.startActivity(browserIntent);
+//                    Intent intent = new Intent(context, NotificationClickReceiver.class);
+//                    intent.putExtra("URLfromList", mUrlsSet.get(getAdapterPosition()));
+
+                    CustomTabActivityHelper.openCustomTab((Activity) context, customTabsIntent, Uri.parse(mUrlsSet.get(getAdapterPosition())), new CustomTabActivityHelper.CustomTabFallback() {
+                        @Override
+                        public void openUri(Activity activity, Uri uri) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                            activity.startActivity(intent);
+                        }
+                    });
+
                     removeAt(getAdapterPosition());
+
+//                    context.startActivity(intent);
+
                 }
             });
 
@@ -61,16 +82,20 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
         public TextView getTextViewTitle() {
             return textViewTitle;
         }
-        public TextView getTextViewData() { return textViewData; }
+
+        public TextView getTextViewData() {
+            return textViewData;
+        }
     }
 
-    VestiListAdapter(ArrayList<String> dataSet, ArrayList<String> titlesSet, ArrayList<String> urlsSet, Context context, View view) {
+    VestiListAdapter(ArrayList<String> dataSet, ArrayList<String> titlesSet, ArrayList<String> urlsSet, Context context, View view, CustomTabsIntent customTabsIntent) {
         mDataSet = dataSet;
         mTitlesSet = titlesSet;
         mUrlsSet = urlsSet;
         this.context = context;
         tinyDB = new TinyDB(context);
         textViewEmpty = view.findViewById(R.id.emptyVesti);
+        this.customTabsIntent = customTabsIntent;
     }
 
     // Create new views (invoked by the layout manager)
@@ -88,7 +113,7 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
     onBindViewHolder(ViewHolder viewHolder, final int position) {
         viewHolder.getTextViewData().setText(mDataSet.get(position));
         viewHolder.getTextViewTitle().setText(mTitlesSet.get(position));
-        if (mTitlesSet.size() == 0){
+        if (mTitlesSet.size() == 0) {
 
             textViewEmpty.setVisibility(View.VISIBLE);
         } else {
@@ -106,10 +131,10 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
     /**
      * Adds data (body text) to the adapter and local storage
      */
-    public void addData(String vest){
+    public void addData(String vest) {
         mDataSet.add(0, vest);
-        if (mDataSet.size() > 30){
-            for (int i = 30; i < mDataSet.size(); i++){
+        if (mDataSet.size() > 30) {
+            for (int i = 30; i < mDataSet.size(); i++) {
                 mDataSet.remove(i);
 
             }
@@ -121,10 +146,10 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
     /**
      * Adds titles to the adapter and local storage
      */
-    public void addTitle(String title){
+    public void addTitle(String title) {
         mTitlesSet.add(0, title);
-        if (mTitlesSet.size() > 30){
-            for (int i = 30; i < mTitlesSet.size(); i++){
+        if (mTitlesSet.size() > 30) {
+            for (int i = 30; i < mTitlesSet.size(); i++) {
                 mTitlesSet.remove(i);
             }
             tinyDB.putListString("titles", mTitlesSet);
@@ -135,11 +160,11 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
     /**
      * Adds URls to the adapter and local storage
      */
-    public void addUrl(String url){
+    public void addUrl(String url) {
         mUrlsSet.add(0, url);
 
-        if (mUrlsSet.size() > 30){
-            for (int i = 30; i < mUrlsSet.size(); i++){
+        if (mUrlsSet.size() > 30) {
+            for (int i = 30; i < mUrlsSet.size(); i++) {
                 mUrlsSet.remove(i);
             }
             tinyDB.putListString("urls", mUrlsSet);
@@ -159,7 +184,7 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
         tinyDB.putListString("vesti", mDataSet);
         tinyDB.putListString("titles", mTitlesSet);
         tinyDB.putListString("urls", mUrlsSet);
-        if (mTitlesSet.size() == 0){
+        if (mTitlesSet.size() == 0) {
 
             textViewEmpty.setVisibility(View.VISIBLE);
         }
@@ -168,7 +193,7 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
     /**
      * Removes an element at a specific position without updating storage
      */
-    public void removeWithoutUpdatingDatabaseAt(int position){
+    public void removeWithoutUpdatingDatabaseAt(int position) {
 
         mDataSet.remove(position);
         mTitlesSet.remove(position);
@@ -185,33 +210,33 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
     /**
      * Clears data from the adapter and local storage
      */
-    public void clearAll(){
+    public void clearAll() {
         int size = mDataSet.size();
         clearData();
         clearTitles();
         clearUrls();
         notifyItemRangeRemoved(0, size);
-        if (mTitlesSet.size() == 0){
+        if (mTitlesSet.size() == 0) {
 
             textViewEmpty.setVisibility(View.VISIBLE);
         }
 
     }
 
-    private void clearData(){
+    private void clearData() {
         mDataSet.clear();
-        tinyDB.putListString("vesti", mDataSet);    }
+        tinyDB.putListString("vesti", mDataSet);
+    }
 
-    private void clearTitles(){
+    private void clearTitles() {
         mTitlesSet.clear();
         tinyDB.putListString("titles", mTitlesSet);
     }
 
-    private void clearUrls(){
+    private void clearUrls() {
         mUrlsSet.clear();
         tinyDB.putListString("urls", mUrlsSet);
     }
-
 
 
 }

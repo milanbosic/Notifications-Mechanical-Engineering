@@ -1,8 +1,10 @@
 package com.vies.notifikacijevesti;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,8 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
     private Context mContext;
     private TinyDB tinyDB;
     private TextView empty;
+    private CustomTabActivityHelper customTabActivityHelper;
+    private CustomTabsIntent customTabsIntent;
 
     /**
      * Provide a reference to the type of views that are used (custom ViewHolder)
@@ -42,8 +46,21 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
                 public void onClick(View v) {
                     if (getAdapterPosition() != -1) {
                         /* open the url from the list since adapter position coresponds to the data set */
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrlsSet.get(getAdapterPosition())));
-                        mContext.startActivity(browserIntent);
+//                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrlsSet.get(getAdapterPosition())));
+//                        mContext.startActivity(browserIntent);
+
+//                        Intent intent = new Intent(mContext, NotificationClickReceiver.class);
+//                        intent.putExtra("URLfromList", mUrlsSet.get(getAdapterPosition()));
+//                        mContext.startActivity(intent);
+
+                        CustomTabActivityHelper.openCustomTab((Activity) mContext, customTabsIntent, Uri.parse(mUrlsSet.get(getAdapterPosition())), new CustomTabActivityHelper.CustomTabFallback() {
+                            @Override
+                            public void openUri(Activity activity, Uri uri) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                activity.startActivity(intent);
+                            }
+                        });
+
                     }
                 }
             });
@@ -58,13 +75,15 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
         }
     }
 
-    IstorijaListAdapter(ArrayList<String> myTitlesSet, ArrayList<String> myDataSet, ArrayList<String> myUrlsSet, Context context, View myRootView) {
+    IstorijaListAdapter(ArrayList<String> myTitlesSet, ArrayList<String> myDataSet, ArrayList<String> myUrlsSet, Context context, View myRootView, CustomTabsIntent customTabsIntent) {
         mTitlesSet = myTitlesSet;
         mDataSet = myDataSet;
         mUrlsSet = myUrlsSet;
         mContext = context;
         tinyDB = new TinyDB(mContext);
         empty = myRootView.findViewById(R.id.emptyVesti1);
+        this.customTabsIntent = customTabsIntent;
+
     }
 
     @Override

@@ -341,7 +341,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             Snackbar snackbar = Snackbar.make(mView, "Već ste sačuvali ovu listu predmeta.", Snackbar.LENGTH_SHORT);
             snackbar.show();
         } else {
-            String url = "http://165.227.154.9/api/";
+            String url = "http://" + tinyDB.getString("serverIP") + "/api";
+            Log.d("SERVERIP", "list request url " + url);
 
             HashMap<String, String> params = new HashMap<>();
 

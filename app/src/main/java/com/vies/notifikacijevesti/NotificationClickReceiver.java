@@ -1,12 +1,20 @@
 package com.vies.notifikacijevesti;
 
+import android.app.Activity;
+import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsClient;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Window;
 
 import java.util.ArrayList;
+
 
 /**
  * Called on notification click
@@ -18,13 +26,34 @@ public class NotificationClickReceiver extends AppCompatActivity{
     public static final String INDEX = "index";
     @Override
     protected void onCreate(Bundle savedInstanceState){
+        //getWindow().requestFeature(Window.FEATURE_PROGRESS);
         super.onCreate(savedInstanceState);
+        //setContentView(R.layout.notification_click);
+        //Toolbar toolbar = findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
+                .addDefaultShareMenuItem()
+                .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                .setShowTitle(true)
+                .setStartAnimations(this, R.anim.left_to_right_start, R.anim.right_to_left_start)
+                .setExitAnimations(this, R.anim.right_to_left_exit, R.anim.left_to_right_exit)
+                .build();
+
         // Get the intent that started this activity
         Intent intent = getIntent();
 
         // Get the extra strings from the intent
         String vest = intent.getStringExtra("vestExtra");
         String url = intent.getStringExtra("urlExtra");
+
+        CustomTabActivityHelper.openCustomTab(this, customTabsIntent, Uri.parse(url), new CustomTabActivityHelper.CustomTabFallback() {
+            @Override
+            public void openUri(Activity activity, Uri uri) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                activity.startActivity(intent);
+            }
+        });
 
         TinyDB tinyDB = new TinyDB(getApplicationContext());
         /* Get the new item from the local storage, since it has been added
@@ -55,10 +84,12 @@ public class NotificationClickReceiver extends AppCompatActivity{
         tinyDB.putListString("titles", listTitles);
         tinyDB.putListString("urls", listUrls);
 
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        browserIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(browserIntent);
+//        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+//        browserIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        startActivity(browserIntent);
 
         finish();
+
+
     }
 }

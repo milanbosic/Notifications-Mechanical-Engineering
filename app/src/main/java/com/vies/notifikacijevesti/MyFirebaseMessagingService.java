@@ -190,7 +190,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Context context = getApplicationContext();
 
         final TinyDB tinyDB = new TinyDB(context);
-        String url = "http://165.227.154.9/api/onrefresh";
+        String url = "http://" + tinyDB.getString("serverIP") + "api/onrefresh";
 
         HashMap<String, String> params = new HashMap<String, String>();
 

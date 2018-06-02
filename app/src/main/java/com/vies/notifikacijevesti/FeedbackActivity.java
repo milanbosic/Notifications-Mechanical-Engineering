@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -36,6 +37,7 @@ public class FeedbackActivity extends AppCompatActivity {
     private String[] items;
     private EditText editText;
     private RequestQueue requestQueue;
+    private TinyDB tinyDB;
     public static final String VolleyTag = "volleyTag";
 
     @Override
@@ -53,6 +55,9 @@ public class FeedbackActivity extends AppCompatActivity {
         // Set the default number of stars for the rating bar
         ratingBar.setRating(5);
         editText = findViewById(R.id.textPoruka);
+
+        // Initialize database
+        tinyDB = new TinyDB(getApplicationContext());
 
         // Hide the keyboard by touching anything outside the editText (the relative layout)
         // * Acessibility warning *
@@ -99,7 +104,9 @@ public class FeedbackActivity extends AppCompatActivity {
             public void onClick(final View view) {
 
                 if (editText.getText().length() <= 500) {
-                    String url = "http://165.227.154.9/api/feedback";
+                    String url = "http://" + tinyDB.getString("serverIP") + "/api/feedback";
+
+                    Log.d("SERVERIP", "feedback url: " + url);
 
                     HashMap<String, String> params = new HashMap<String, String>();
 

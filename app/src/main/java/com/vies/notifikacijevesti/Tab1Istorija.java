@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +22,7 @@ import java.util.ArrayList;
  * Tab that shows a history of all received data
  */
 
-public class Tab1Istorija extends Fragment {
+public class Tab1Istorija extends Fragment implements CustomTabActivityHelper.ConnectionCallback {
 
     RecyclerView mRecyclerView;
     private ArrayList<String> titleSet;
@@ -28,6 +30,7 @@ public class Tab1Istorija extends Fragment {
     private ArrayList<String> urlSet;
     private IstorijaListAdapter mAdapter;
     private TextView emptyText;
+    private CustomTabsIntent customTabsIntent;
     TinyDB tinyDB;
 
     @Override
@@ -38,6 +41,13 @@ public class Tab1Istorija extends Fragment {
          */
         IntentFilter intentFilter = new IntentFilter(MyFirebaseMessagingService.UPDATE_ISTORIJA);
         LocalBroadcastManager.getInstance(this.getContext()).registerReceiver(onNotice, intentFilter);
+        customTabsIntent = new CustomTabsIntent.Builder()
+                .addDefaultShareMenuItem()
+                .setToolbarColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary))
+                .setShowTitle(true)
+                .setStartAnimations(getActivity(), R.anim.left_to_right_start, R.anim.right_to_left_start)
+                .setExitAnimations(getActivity(), R.anim.right_to_left_exit, R.anim.left_to_right_exit)
+                .build();
 
     }
 
@@ -52,7 +62,7 @@ public class Tab1Istorija extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         initDataSet();
         // initialize the adapter that regulates data
-        mAdapter = new IstorijaListAdapter(titleSet, dataSet, urlSet, getContext(), rootView);
+        mAdapter = new IstorijaListAdapter(titleSet, dataSet, urlSet, getContext(), rootView, customTabsIntent);
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
@@ -95,4 +105,13 @@ public class Tab1Istorija extends Fragment {
         }
     };
 
+    @Override
+    public void onCustomTabsConnected() {
+
+    }
+
+    @Override
+    public void onCustomTabsDisconnected() {
+
+    }
 }
