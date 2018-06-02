@@ -161,20 +161,20 @@ public class MainActivity extends AppCompatActivity implements CustomTabActivity
             mViewPager.setCurrentItem(1);
         }
 
-        // Get the lists with data from local storage
-        ArrayList<String> listData = tinyDB.getListString("vesti");
-        ArrayList<String> listTitles = tinyDB.getListString("titles");
-        ArrayList<String> listUrls = tinyDB.getListString("urls");
-
-        // Add new data
-        listData.add(0, "test1");
-        listTitles.add(0, "test 1 1 1");
-        listUrls.add(0, "http://mas.bg.ac.rs");
-
-        // Save modified lists to local storage
-        tinyDB.putListString("vesti", listData);
-        tinyDB.putListString("titles", listTitles);
-        tinyDB.putListString("urls", listUrls);
+//        // Get the lists with data from local storage
+//        ArrayList<String> listData = tinyDB.getListString("vesti");
+//        ArrayList<String> listTitles = tinyDB.getListString("titles");
+//        ArrayList<String> listUrls = tinyDB.getListString("urls");
+//
+//        // Add new data
+//        listData.add(0, "test1");
+//        listTitles.add(0, "test 1 1 1");
+//        listUrls.add(0, "http://mas.bg.ac.rs");
+//
+//        // Save modified lists to local storage
+//        tinyDB.putListString("vesti", listData);
+//        tinyDB.putListString("titles", listTitles);
+//        tinyDB.putListString("urls", listUrls);
 
         // Show and hide FAB depending on the selected fragment
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
