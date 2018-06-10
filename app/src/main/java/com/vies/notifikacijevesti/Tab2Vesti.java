@@ -46,7 +46,6 @@ public class Tab2Vesti extends Fragment implements CustomTabActivityHelper.Conne
         customTabsIntent = new CustomTabsIntent.Builder()
                 .addDefaultShareMenuItem()
                 .setToolbarColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary))
-                .setShowTitle(true)
                 .setStartAnimations(getActivity(), R.anim.left_to_right_start, R.anim.right_to_left_start)
                 .setExitAnimations(getActivity(), R.anim.right_to_left_exit, R.anim.left_to_right_exit)
                 .build();

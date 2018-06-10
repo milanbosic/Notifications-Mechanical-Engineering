@@ -106,7 +106,7 @@ public class FeedbackActivity extends AppCompatActivity {
                 if (editText.getText().length() <= 500) {
                     String url = "http://" + tinyDB.getString("serverIP") + "/api/feedback";
 
-                    Log.d("SERVERIP", "feedback url: " + url);
+                    Log.d("SERVER_IP", "feedback url: " + url);
 
                     HashMap<String, String> params = new HashMap<String, String>();
 
@@ -137,7 +137,7 @@ public class FeedbackActivity extends AppCompatActivity {
                             try {
                                 if (response.getString("message").contains("Success")) {
 
-                                    Snackbar.make(view, "Uspešno sačuvano", Snackbar.LENGTH_LONG).show();
+                                    Snackbar.make(view, "Poruka uspešno poslata.", Snackbar.LENGTH_LONG).show();
                                 } else if (response.getString("message").contains("ticket")) {
                                     serverErrorDialog("Vaša poruka je prihvaćena, molimo sačekajte da se obradi.", view);
                                 } else {

@@ -1,6 +1,9 @@
 package com.vies.notifikacijevesti;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
@@ -15,6 +18,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,6 +42,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -254,27 +259,60 @@ public class MainActivity extends AppCompatActivity implements CustomTabActivity
 
             }
         });
-
-
+//
+//        if (tinyDB.getBoolean("firebaseResetSelected")) {
+//            serverErrorDialog(getApplicationContext());
+//            tinyDB.putBoolean("firebaseResetSelected", false);
+//        }
 
         //database.setPersistenceEnabled(true);
-//        DatabaseReference myRef = database.getReference("feedback");
+//        DatabaseReference myRef = database.getReference("subjectList");
 //        Log.d("FirebaseDatabase", "Initialized!");
 //        //Log.d("FirebaseDatabase", "local storage: " + tinyDB.getString("feedbackFirebase"));
 //        myRef.addValueEventListener(new ValueEventListener() {
 //            @Override
 //            public void onDataChange(DataSnapshot dataSnapshot) {
 //
-//                Map<String, Object> map = (Map<String, Object>)dataSnapshot.getValue();
-//                Log.d("FirebaseDatabase", "OnDataChange triggered and value is: " );
-//                Set<String> s = map.keySet();
-//                for (String value : s) {
-//                    Log.d("FirebaseDatabase", value);
+//                    Map<String, Object> map = (Map<String, Object>)dataSnapshot.getValue();
+////                Log.d("FirebaseDatabase", "OnDataChange triggered and value is: " );
+////                Set<String> s = map.keySet();
+////                for (String value : s) {
+////                    Log.d("FirebaseDatabase", value);
+////                }
+////                Set set = map.entrySet();
+////                for (Object o : set) {
+////                    Log.d("FirebaseDatabase", o.toString());
+////                }
+//
+//                Set<String> oas = (Set<String>) map.get("oas");
+//                Set<String> mas = (Set<String>) map.get("mas");
+//                Set<String> kat = (Set<String>) map.get("kat");
+//
+//                ArrayList<String> oasList = new ArrayList<String>(oas);
+//                ArrayList<String> masList = new ArrayList<String>(mas);
+//                ArrayList<String> katList = new ArrayList<String>(kat);
+//
+//                ArrayList<String> oasListDatabase = tinyDB.getListString("oas");
+//                ArrayList<String> masListDatabase = tinyDB.getListString("mas");
+//                ArrayList<String> katListDatabase = tinyDB.getListString("kat");
+//
+//                // Check if the list is different
+//                if (!oasList.equals(oasListDatabase) || !masList.equals(masListDatabase) || !katList.equals(katListDatabase)) {
+//
+//                    tinyDB.putListString("oas", oasList);
+//                    tinyDB.putListString("mas", masList);
+//                    tinyDB.putListString("kat", katList);
+//
+//                    /* If the list changes the indexes will probably change so a
+//                    reset of the selected subjects is needed so the user can set them again */
+//                    tinyDB.remove("selectedSubjects");
+//                    tinyDB.remove("oasSelected");
+//                    tinyDB.remove("masSelected");
+//                    tinyDB.remove("katedreSelected");
+//
+//                    tinyDB.putBoolean("firebaseResetSelected", true);
 //                }
-//                Set set = map.entrySet();
-//                for (Object o : set) {
-//                    Log.d("FirebaseDatabase", o.toString());
-//                }
+//
 //
 //            }
 //
@@ -293,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements CustomTabActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 //                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
                 String serverIP = (String) dataSnapshot.getValue();
-                Log.d("SERVERIP", "Server ip changed: " + serverIP);
+                Log.d("SERVER_IP", "Current server ip: " + serverIP);
                 tinyDB.putString("serverIP", serverIP);
 
 //                Set<String> s = map.keySet();
@@ -309,7 +347,7 @@ public class MainActivity extends AppCompatActivity implements CustomTabActivity
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("SERVERIP", databaseError.toException());
+                Log.w("SERVER_IP", databaseError.toException());
                 //Toast.makeText(getApplicationContext(), databaseError.toString(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -416,4 +454,21 @@ public class MainActivity extends AppCompatActivity implements CustomTabActivity
             return null;
         }
     }
+//    private void serverErrorDialog(Context mContext) {
+//        AlertDialog.Builder builder;
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Light_Dialog_Alert);
+//        } else {
+//            builder = new AlertDialog.Builder(mContext);
+//        }
+//        builder.setTitle("Ažuriranje")
+//                .setMessage("Lista predmeta je ažurirana, obeležite ponovo predmete.")
+//                .setPositiveButton("U redu", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                    }
+//                })
+//                .setIcon(R.drawable.ic_alert)
+//                .show();
+//    }
 }

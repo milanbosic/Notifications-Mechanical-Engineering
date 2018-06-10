@@ -314,8 +314,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-
-
     // Toggle the visibility of the progress bar and other views
     private void ToggleProgressBar(boolean enableOrDisable) {
         if (enableOrDisable) {
@@ -342,7 +340,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             snackbar.show();
         } else {
             String url = "http://" + tinyDB.getString("serverIP") + "/api";
-            Log.d("SERVERIP", "list request url " + url);
+            Log.d("SERVER_IP", "list request url " + url);
 
             HashMap<String, String> params = new HashMap<>();
 
