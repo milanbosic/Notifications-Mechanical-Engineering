@@ -1,5 +1,6 @@
 package com.vies.notifikacijevesti;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,7 +35,9 @@ public class Tab2Vesti extends Fragment implements CustomTabActivityHelper.Conne
     private ArrayList<String> mUrlsSet;
     private TextView emptyText;
     private CustomTabsIntent customTabsIntent;
+    private NotificationManager notificationManager;
     TinyDB tinyDB;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,7 @@ public class Tab2Vesti extends Fragment implements CustomTabActivityHelper.Conne
                 .setStartAnimations(getActivity(), R.anim.left_to_right_start, R.anim.right_to_left_start)
                 .setExitAnimations(getActivity(), R.anim.right_to_left_exit, R.anim.left_to_right_exit)
                 .build();
+        notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
 
     }
 
@@ -67,7 +71,7 @@ public class Tab2Vesti extends Fragment implements CustomTabActivityHelper.Conne
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // initialize the adapter that regulates data
-        mAdapter = new VestiListAdapter(mDataset, mTitlesSet, mUrlsSet, getContext(), rootView, customTabsIntent);
+        mAdapter = new VestiListAdapter(mDataset, mTitlesSet, mUrlsSet, getContext(), rootView, customTabsIntent, notificationManager);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -101,8 +105,8 @@ public class Tab2Vesti extends Fragment implements CustomTabActivityHelper.Conne
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            /* If SHOULD_DELETE extra string is true, the notification has been clicked on,
-            hence delete the item from the list */
+            /* If SHOULD_DELETE extra string is true, the notification, or a relevant item from
+            history, has been clicked on, so delete the item from the list */
             if (intent.getBooleanExtra(NotificationClickReceiver.SHOULD_DELETE, false)) {
                 int index = intent.getIntExtra(NotificationClickReceiver.INDEX, -1);
                 // No need to update local storage since that has been done in the activity that sent this intent

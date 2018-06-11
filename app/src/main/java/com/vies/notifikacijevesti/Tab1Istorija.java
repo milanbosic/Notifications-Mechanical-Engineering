@@ -1,5 +1,6 @@
 package com.vies.notifikacijevesti;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,7 @@ public class Tab1Istorija extends Fragment implements CustomTabActivityHelper.Co
     private IstorijaListAdapter mAdapter;
     private TextView emptyText;
     private CustomTabsIntent customTabsIntent;
+    private NotificationManager notificationManager;
     TinyDB tinyDB;
 
     @Override
@@ -48,6 +50,7 @@ public class Tab1Istorija extends Fragment implements CustomTabActivityHelper.Co
                 .setExitAnimations(getActivity(), R.anim.right_to_left_exit, R.anim.left_to_right_exit)
                 .build();
 
+        notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,7 +64,7 @@ public class Tab1Istorija extends Fragment implements CustomTabActivityHelper.Co
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         initDataSet();
         // initialize the adapter that regulates data
-        mAdapter = new IstorijaListAdapter(titleSet, dataSet, urlSet, getContext(), rootView, customTabsIntent);
+        mAdapter = new IstorijaListAdapter(titleSet, dataSet, urlSet, getContext(), rootView, customTabsIntent, notificationManager);
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;

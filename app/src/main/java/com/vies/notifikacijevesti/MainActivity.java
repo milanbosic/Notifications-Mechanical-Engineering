@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements CustomTabActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 //                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
                 String serverIP = (String) dataSnapshot.getValue();
-                Log.d("SERVER_IP", "Current server ip: " + serverIP);
+                // Log.d("SERVER_IP", "Current server ip: " + serverIP);
                 tinyDB.putString("serverIP", serverIP);
 
 //                Set<String> s = map.keySet();
@@ -447,7 +447,7 @@ public class MainActivity extends AppCompatActivity implements CustomTabActivity
                 case 0:
                     return "Istorija";
                 case 1:
-                    return "Vesti";
+                    return "Nepročitano";
                 case 2:
                     return "Predmeti";
             }

@@ -340,7 +340,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             snackbar.show();
         } else {
             String url = "http://" + tinyDB.getString("serverIP") + "/api";
-            Log.d("SERVER_IP", "list request url " + url);
+            // Log.d("SERVER_IP", "list request url " + url);
 
             HashMap<String, String> params = new HashMap<>();
 

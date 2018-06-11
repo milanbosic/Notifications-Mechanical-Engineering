@@ -37,10 +37,10 @@
     <string name="about_tekst2">Kako se koristi?</string>
 
     <string name="about_tekst3">Obeležite predmete za koje želite da primate notifikacije i dodirnite dugme <b>&quot;Sačuvaj&quot;</b>.
-        Kada se objavi nova vest, stići će vam notifikacija. Ukoliko je ne otvorite, već želite da pogledate kasnije, vest će biti zapisana na tabu <b>&quot;Vesti&quot;</b>.
+        Kada se objavi nova vest, stići će vam notifikacija. Ukoliko je ne otvorite, već želite da pogledate kasnije, vest će biti zapisana na tabu <b>&quot;Nepročitano&quot;</b>.
         \n\nTab &quot;<b>Istorija</b>&quot; sadrži poslednjih 30 vesti, Bez obzira na to da li ste ih pročitali ili ne.</string>
 
-    <string name="about_tekst4"><b>Autori aplikacije:\n\nVies Studios\n\nKontakt: viesstudios@gmail.com</b></string>
+    <string name="about_tekst4"><b>Kontakt autora: viesstudios@gmail.com</b></string>
 
     <string name="drawer_header_1">Notifikacije Mašinski fakultet</string>
     <string name="drawer_header_2">Notifikacije o novim vestima</string>

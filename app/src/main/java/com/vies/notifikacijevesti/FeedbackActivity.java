@@ -106,7 +106,7 @@ public class FeedbackActivity extends AppCompatActivity {
                 if (editText.getText().length() <= 500) {
                     String url = "http://" + tinyDB.getString("serverIP") + "/api/feedback";
 
-                    Log.d("SERVER_IP", "feedback url: " + url);
+                    // Log.d("SERVER_IP", "feedback url: " + url);
 
                     HashMap<String, String> params = new HashMap<String, String>();
 

@@ -2,12 +2,15 @@
 package com.vies.notifikacijevesti;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
 
 /**
  * Provide views to RecyclerView in Tab2Vesti.
@@ -31,6 +35,10 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
     private TinyDB tinyDB;
 
     private CustomTabsIntent customTabsIntent;
+    private NotificationManager notificationManager;
+
+    // variable to track event time
+    private long mLastClickTime = 0;
 
     /**
      * Provide a reference to the type of views that are used (custom ViewHolder)
@@ -49,7 +57,13 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // Preventing multiple clicks, using threshold of .5 second
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 500) {
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     if (getAdapterPosition() != -1)
+                        notificationManager.cancel(mDataSet.get(getAdapterPosition()).hashCode());
                         removeAt(getAdapterPosition());
                 }
             });
@@ -57,20 +71,29 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // Preventing multiple clicks, using threshold of .5 second
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 500) {
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
+
 //                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrlsSet.get(getAdapterPosition())));
 //                    context.startActivity(browserIntent);
 //                    Intent intent = new Intent(context, NotificationClickReceiver.class);
 //                    intent.putExtra("URLfromList", mUrlsSet.get(getAdapterPosition()));
+                    if (getAdapterPosition() != -1) {
+                        CustomTabActivityHelper.openCustomTab((Activity) context, customTabsIntent, Uri.parse(mUrlsSet.get(getAdapterPosition())), new CustomTabActivityHelper.CustomTabFallback() {
+                            @Override
+                            public void openUri (Activity activity, Uri uri) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                activity.startActivity(intent);
+                            }
+                        });
 
-                    CustomTabActivityHelper.openCustomTab((Activity) context, customTabsIntent, Uri.parse(mUrlsSet.get(getAdapterPosition())), new CustomTabActivityHelper.CustomTabFallback() {
-                        @Override
-                        public void openUri(Activity activity, Uri uri) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                            activity.startActivity(intent);
-                        }
-                    });
 
-                    removeAt(getAdapterPosition());
+                        notificationManager.cancel(mDataSet.get(getAdapterPosition()).hashCode());
+                        removeAt(getAdapterPosition());
+                    }
 
 //                    context.startActivity(intent);
 
@@ -88,7 +111,7 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
         }
     }
 
-    VestiListAdapter(ArrayList<String> dataSet, ArrayList<String> titlesSet, ArrayList<String> urlsSet, Context context, View view, CustomTabsIntent customTabsIntent) {
+    VestiListAdapter(ArrayList<String> dataSet, ArrayList<String> titlesSet, ArrayList<String> urlsSet, Context context, View view, CustomTabsIntent customTabsIntent, NotificationManager notificationManager) {
         mDataSet = dataSet;
         mTitlesSet = titlesSet;
         mUrlsSet = urlsSet;
@@ -96,6 +119,7 @@ public class VestiListAdapter extends RecyclerView.Adapter<VestiListAdapter.View
         tinyDB = new TinyDB(context);
         textViewEmpty = view.findViewById(R.id.emptyVesti);
         this.customTabsIntent = customTabsIntent;
+        this.notificationManager = notificationManager;
     }
 
     // Create new views (invoked by the layout manager)

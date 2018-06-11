@@ -125,7 +125,6 @@ public class CustomTabActivityHelper implements ServiceConnectionCallback {
     public void onServiceConnected(CustomTabsClient client) {
         mClient = client;
         mClient.warmup(0L);
-        Log.d("SERVICECON", "ALL WARNED UP");
         if (mConnectionCallback != null) mConnectionCallback.onCustomTabsConnected();
     }
 

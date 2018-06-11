@@ -47,6 +47,7 @@ public class NotificationClickReceiver extends AppCompatActivity{
         String vest = intent.getStringExtra("vestExtra");
         String url = intent.getStringExtra("urlExtra");
 
+        // Open custom tab with the desired URL
         CustomTabActivityHelper.openCustomTab(this, customTabsIntent, Uri.parse(url), new CustomTabActivityHelper.CustomTabFallback() {
             @Override
             public void openUri(Activity activity, Uri uri) {
@@ -55,9 +56,10 @@ public class NotificationClickReceiver extends AppCompatActivity{
             }
         });
 
+        // Initialize database
         TinyDB tinyDB = new TinyDB(getApplicationContext());
         /* Get the new item from the local storage, since it has been added
-         * in MyFirebaseMessagingService when the Firebase message arrived
+         * in MyFirebaseMessagingService when the Firebase message arrived;
          * returns -1 if no such item exists
          */
         int index = tinyDB.getListString("vesti").indexOf(vest);
@@ -70,25 +72,26 @@ public class NotificationClickReceiver extends AppCompatActivity{
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent1);
 
         // If index != -1 remove the corresponding item from local storage
-        ArrayList<String> listData = tinyDB.getListString("vesti");
-        ArrayList<String> listTitles = tinyDB.getListString("titles");
-        ArrayList<String> listUrls = tinyDB.getListString("urls");
-
         if (index != -1) {
+            ArrayList<String> listData = tinyDB.getListString("vesti");
+            ArrayList<String> listTitles = tinyDB.getListString("titles");
+            ArrayList<String> listUrls = tinyDB.getListString("urls");
+
             listData.remove(index);
             listTitles.remove(index);
             listUrls.remove(index);
+
+            tinyDB.putListString("vesti", listData);
+            tinyDB.putListString("titles", listTitles);
+            tinyDB.putListString("urls", listUrls);
         }
 
-        tinyDB.putListString("vesti", listData);
-        tinyDB.putListString("titles", listTitles);
-        tinyDB.putListString("urls", listUrls);
+        finish();
 
 //        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 //        browserIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 //        startActivity(browserIntent);
 
-        finish();
 
 
     }

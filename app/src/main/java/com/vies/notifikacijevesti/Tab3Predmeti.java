@@ -112,7 +112,7 @@ public class Tab3Predmeti extends Fragment {
             sequence.addSequenceItem(
                     new MaterialShowcaseView.Builder(getActivity())
                             .setTarget(view)
-                            .setContentText("U tabu \"Vesti\" će se pojavljivati nepročitane vesti, a tab \"Istorija\" sadrži istorijat svih pristiglih vesti.")
+                            .setContentText("U tabu \"Nepročitano\" će se pojavljivati nepročitane vesti, a tab \"Istorija\" sadrži istorijat svih pristiglih vesti.")
                             .setDismissOnTouch(true)
                             .withRectangleShape(true)
                             .build()

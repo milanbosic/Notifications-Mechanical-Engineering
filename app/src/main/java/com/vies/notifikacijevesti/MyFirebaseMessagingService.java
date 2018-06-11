@@ -14,8 +14,6 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,11 +21,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.Volley;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -134,13 +127,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     // Send the notification to the user
     private void sendNotification(Map<String, String> notification) {
 
-        // A unique ID is needed for every notification, curent system time can be used
-        int requestID = (int) System.currentTimeMillis();
-
+        // A unique ID is needed for every notification, hashcode can be used since it's unique
+        int requestID = novaVest.hashCode();
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String ringtonePreference = sharedPrefs.getString("notifications_new_message_ringtone", "DEFAULT_SOUND");
         Uri ringtoneuri = Uri.parse(ringtonePreference);
         boolean vibrate = sharedPrefs.getBoolean("notifications_new_message_vibrate", true);
+
         Intent intent = new Intent(this, NotificationClickReceiver.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("vestExtra", novaVest);
