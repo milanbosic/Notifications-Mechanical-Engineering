@@ -1,5 +1,6 @@
 package com.vies.notifikacijevesti;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -150,6 +151,10 @@ public class MainActivity extends AppCompatActivity implements CustomTabActivity
                 LocalBroadcastManager.getInstance(v.getContext()).sendBroadcast(intent);
                 Snackbar snackbar = Snackbar.make(v, "Sve vesti su obrisane.", Snackbar.LENGTH_SHORT);
                 snackbar.show();
+                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                if (notificationManager != null) {
+                    notificationManager.cancelAll();
+                }
             }
         });
 
