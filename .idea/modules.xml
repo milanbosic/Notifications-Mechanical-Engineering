@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NotifikacijeVesti.iml" filepath="$PROJECT_DIR$/NotifikacijeVesti.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Notifications-Mechanical-Engineering.iml" filepath="$PROJECT_DIR$/.idea/modules/Notifications-Mechanical-Engineering.iml" group="Notifications-Mechanical-Engineering" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="Notifications-Mechanical-Engineering/app" />
     </modules>
   </component>
 </project>
