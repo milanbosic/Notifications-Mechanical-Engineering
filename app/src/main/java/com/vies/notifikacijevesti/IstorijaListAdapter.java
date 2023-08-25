@@ -42,29 +42,21 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
 
         ViewHolder(View v) {
             super(v);
-            // initialize two views for title and data for each card in the Recycler View
+            // Inicijalizacija dva view-a za naslov i sadržaj vesti za svaku karticu u RecyclerView-u
             mTitleText = v.findViewById(R.id.textViewIstorijaTitle);
             mDataText = v.findViewById(R.id.textViewIstorijaData);
-            // Set on click listener for the views in order to open a URL on click
+            // Podešavanja listener-a za klik za view-e da bi se otvorio URL
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int adapterPosition = getAdapterPosition();
-                    // Preventing multiple clicks, using threshold of .5 second
+                    // Prevencija duplih klikova
                     if (SystemClock.elapsedRealtime() - mLastClickTime < 500) {
                         return;
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
                     if (adapterPosition != -1) {
-
-//                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrlsSet.get(getAdapterPosition())));
-//                        mContext.startActivity(browserIntent);
-
-//                        Intent intent = new Intent(mContext, NotificationClickReceiver.class);
-//                        intent.putExtra("URLfromList", mUrlsSet.get(getAdapterPosition()));
-//                        mContext.startActivity(intent);
-
-                        /* open the url from the list since adapter position coresponds to the data set */
+                        // Otvaranje URL-a iz liste jer pozicija elementa u adapteru odgovara setu podataka
                         CustomTabActivityHelper.openCustomTab((Activity) mContext, customTabsIntent, Uri.parse(mUrlsSet.get(adapterPosition)), new CustomTabActivityHelper.CustomTabFallback() {
                             @Override
                             public void openUri(Activity activity, Uri uri) {
@@ -76,10 +68,9 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
                         notificationManager.cancel(mDataSet.get(adapterPosition).hashCode());
 
                         int index = tinyDB.getListString("vesti").indexOf(mDataSet.get(adapterPosition));
-                        /* If the selected item exists in the database of unread items (its index is not -1), delete it from storage
-                         * and start the intent which is received by Tab2Vesti to refresh the adapter */
+                        /* Ako selektovan element postoji u bazi neporčitanih vesti, obrisati vest iz baze i
+                         * pokrenuti intent koji se očekuje u Tab2Vesti i koji refrešuje adapter */
                         if (index != -1) {
-
                             ArrayList<String> listData = tinyDB.getListString("vesti");
                             ArrayList<String> listTitles = tinyDB.getListString("titles");
                             ArrayList<String> listUrls = tinyDB.getListString("urls");
@@ -151,9 +142,7 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
         return mDataSet.size();
     }
 
-    /**
-     * Adds Titles to the adapter and local storage
-     */
+    // Dodavanje naslova u adapter i bazu
     public void addTitle(String title) {
         mTitlesSet.add(0, title);
         if (mTitlesSet.size() > 30) {
@@ -166,9 +155,7 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
         empty.setVisibility(View.GONE);
     }
 
-    /**
-     * Adds Data to the adapter and local storage
-     */
+    // Dodavanje sadržaja vesti u adapter i bazu
     public void addData(String data) {
         mDataSet.add(0, data);
         if (mDataSet.size() > 30) {
@@ -179,9 +166,7 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
         }
     }
 
-    /**
-     * Adds URLs to the adapter and local storage
-     */
+    // Dodavanje URL-a u adapter i bazu
     public void addUrl(String url) {
         mUrlsSet.add(0, url);
         if (mUrlsSet.size() > 30) {
@@ -194,8 +179,8 @@ public class IstorijaListAdapter extends RecyclerView.Adapter<IstorijaListAdapte
     }
 
     /**
-     * Clears data from the adapter and local storage
-     * and sets empty text view object to be visible
+     * Brisanje podataka iz adaptera i baze i podešavanje
+     * vidljivosti teksta koji se prikazuje kada nema vesti
      */
     public void clearAll() {
         int size = mTitlesSet.size();

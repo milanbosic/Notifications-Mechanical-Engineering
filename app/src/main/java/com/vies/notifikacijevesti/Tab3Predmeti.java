@@ -70,19 +70,19 @@ public class Tab3Predmeti extends Fragment {
             }
         });
 
-        // Check if an app has been started once, if not show the tutorial sequence
+        // Proveriti da li je korisnik prošao kroz tutorijal, ako nije, prikazati isti
         if (!tinyDB.contains("firstTime")){
             listView.expandGroup(0);
             View view = getActivity().findViewById(R.id.tabs);
 
-            // Tutorial sequence to introduce the user
+            // Tutorija sekvenca za uvod
             MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity());
 
             sequence.setOnItemDismissedListener(new MaterialShowcaseSequence.OnSequenceItemDismissedListener() {
                 @Override
                 public void onDismiss(MaterialShowcaseView materialShowcaseView, int i) {
 
-                    // If sequence counter has reached the third slide, update local storage
+                    // Ako je korisnik došao do trećeg slajda, ažurirati bazu
                     if (counter == 2){
                         tinyDB.putBoolean("firstTime", true);
                     }
@@ -124,7 +124,7 @@ public class Tab3Predmeti extends Fragment {
         return rootView;
     }
 
-    // Initialize expandable list data
+    // Inicijalizacija liste koja se može proširiti
     private void initData(){
         listDataHeader = new ArrayList<>();
         listHash = new HashMap<>();
@@ -133,7 +133,7 @@ public class Tab3Predmeti extends Fragment {
         listDataHeader.add("Master Akademske Studije");
         listDataHeader.add("Katedre");
 
-        // If the first list doesn't exist in the database, set default values
+        // Ako lista nije definisana prvi put, postaviti default vrednosti
         List<String> oas;
         List<String> mas;
         List<String> kat;

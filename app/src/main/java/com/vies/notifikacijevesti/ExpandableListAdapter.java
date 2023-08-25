@@ -250,15 +250,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     .getTag(R.layout.exp_list_item);
         }
 
-        /* bug * Checkbox object needs to be declared here separately
-         * since getting checkbox text using the childviewholder seems to result in wrong text for some reason */
+        /*  Checkbox objekat mora da se definiše ovde odvojeno
+         * jer dobijanje checkbox teksta iz childviewholdera rezultuje pogrešnim tekstom
+         * */
         final CheckBox cb = convertView.findViewById(R.id.checkBoxListItem);
 
         childViewHolder.mCheckBox.setText(childText);
 
         childViewHolder.mCheckBox.setOnCheckedChangeListener(null);
 
-        // Set the array with subjects based on the group position
+        // Setovati niz sa predmeti baziranim na poziciji grupe
         switch (groupPosition) {
             case 0:
                 checkedArray = oasSelected;
@@ -294,7 +295,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                 }
 
-                // Add or remove the text value of the coresponding checkboxes
+                // Dodati ili obrisati tekst vrednost odgovarajućeg checkboxa
                 if (isChecked) {
                     mSelectedSubjects.add(cb.getText().toString());
                 } else {
@@ -314,7 +315,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-    // Toggle the visibility of the progress bar and other views
+    // Menjaje vidljivosti progress bara i proširive liste predmeta
     private void ToggleProgressBar(boolean enableOrDisable) {
         if (enableOrDisable) {
             mProgressBar.setVisibility(View.VISIBLE);
@@ -340,7 +341,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             snackbar.show();
         } else {
             String url = "http://" + tinyDB.getString("serverIP") + "/api";
-            // Log.d("SERVER_IP", "list request url " + url);
 
             HashMap<String, String> params = new HashMap<>();
 
@@ -415,8 +415,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         CheckBox mGroupCheckBox;
 
     }
-
     public final class ChildViewHolder {
+
         CheckBox mCheckBox;
 
     }
@@ -459,8 +459,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     /**
-     * Custom OnCheckedChangeListener for group checkboxes
-     * Adds or removes children text from the mSelectedList based on the checked state
+     * Custom OnCheckedChangeListener za checkbox-ove grupa
+     * Dodaje ili brise children tekst iz mSelectedList bazirano na stanju čekiranosti
      */
     public class MyOnCheckedChangeListener implements CompoundButton.OnCheckedChangeListener {
 
@@ -501,7 +501,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
             }
 
-            // Add or remove children text from the selected list without duplicates
+            // Dodaje ili briše children tekst iz selektovane liste bez duplikata
             if (isChecked) {
                 boolean shouldAdd = true;
                 for (int i = 0; i < referenceArray.size(); i++) {

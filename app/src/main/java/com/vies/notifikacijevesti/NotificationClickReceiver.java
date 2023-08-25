@@ -26,12 +26,7 @@ public class NotificationClickReceiver extends AppCompatActivity{
     public static final String INDEX = "index";
     @Override
     protected void onCreate(Bundle savedInstanceState){
-        //getWindow().requestFeature(Window.FEATURE_PROGRESS);
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.notification_click);
-        //Toolbar toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
                 .addDefaultShareMenuItem()
                 .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
@@ -40,14 +35,14 @@ public class NotificationClickReceiver extends AppCompatActivity{
                 .setExitAnimations(this, R.anim.right_to_left_exit, R.anim.left_to_right_exit)
                 .build();
 
-        // Get the intent that started this activity
+        // Intent koji je pokrenuo ovu aktivnost
         Intent intent = getIntent();
 
-        // Get the extra strings from the intent
+        // Izvuci ekstra stringove iz intenta
         String vest = intent.getStringExtra("vestExtra");
         String url = intent.getStringExtra("urlExtra");
 
-        // Open custom tab with the desired URL
+        // Otvoriti custom tab sa zeljenim urlom
         CustomTabActivityHelper.openCustomTab(this, customTabsIntent, Uri.parse(url), new CustomTabActivityHelper.CustomTabFallback() {
             @Override
             public void openUri(Activity activity, Uri uri) {
@@ -56,22 +51,18 @@ public class NotificationClickReceiver extends AppCompatActivity{
             }
         });
 
-        // Initialize database
+        // Inicijalizacija baze
         TinyDB tinyDB = new TinyDB(getApplicationContext());
-        /* Get the new item from the local storage, since it has been added
-         * in MyFirebaseMessagingService when the Firebase message arrived;
-         * returns -1 if no such item exists
-         */
         int index = tinyDB.getListString("vesti").indexOf(vest);
 
-        // Generate a new Intent with extra strings to update the lists in fragments
+        // Generisanje novog intenta sa ekstra stringovima da bi se ažurirala lista u fragmentima
         Intent intent1 = new Intent();
         intent1.putExtra(SHOULD_DELETE, true);
         intent1.putExtra(INDEX, index);
         intent1.setAction(MyFirebaseMessagingService.UPDATE_VESTI);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent1);
 
-        // If index != -1 remove the corresponding item from local storage
+        // Ako je index - 1 obrisati iz lokala
         if (index != -1) {
             ArrayList<String> listData = tinyDB.getListString("vesti");
             ArrayList<String> listTitles = tinyDB.getListString("titles");
@@ -87,12 +78,6 @@ public class NotificationClickReceiver extends AppCompatActivity{
         }
 
         finish();
-
-//        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-//        browserIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//        startActivity(browserIntent);
-
-
 
     }
 }
